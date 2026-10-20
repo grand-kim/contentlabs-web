@@ -32,13 +32,12 @@ web/
 
 ## 남은 작업
 
-- 대표자명: 푸터 「입력 예정」 자리에 반영 (그 외 회사 정보는 contentlabs.co.kr 기준으로 반영 완료)
 - 경기도학교안전공제회 로고: 현재 저해상도 심볼(잡코리아 기업정보 이미지) → 공제회에서 원본 CI 받아 교체
 - 그 밖의 발주처(텍스트 줄): 필요 시 로고 이미지로 교체
 - 회사소개서 버튼: PDF 파일 연결
 - 제작 포맷 카드: 각 포맷 서브페이지 링크 연결 (현재 `#formats`)
 - 솔루션 화면: 그림 목업 → 실제 영상/캡처로 교체 가능
-- 견적 챗봇: 배포 후 `assets/js/config.js`의 `chatbotUrl`에 주소 입력
+- 견적 챗봇: 연결 완료 (https://elearning-quote-bot-contentlabs.streamlit.app)
 
 ## 레퍼런스 로고 출처 (assets/img/clients)
 
@@ -90,3 +89,9 @@ git push -u origin main
 - 공개 범위: 이 폴더에는 비밀 정보가 없어 공개(Public)도 가능합니다. 시안 단계라 외부에 보이지 않게 하려면 비공개로 두세요.
 - 실제 서비스 반영(contentlabs.co.kr)은 기존 웹호스팅에 이 폴더를 올리는 방식으로 별도 진행합니다.
 - 챗봇은 별도 저장소(`contentlabs-quote-bot`, 비공개)입니다. 두 저장소는 `assets/js/config.js`의 `chatbotUrl` 한 줄로만 연결됩니다.
+
+## 회사 정보 기준 (2026-10-20)
+
+- 대표: 윤태원 / 문의 이메일: ceo@ailp.kr / 전화: 050-5491-1111
+- 주소·사업자등록번호: contentlabs.co.kr 기준
+- 추후 업데이트: 경기도학교안전공제회 원본 로고, 회사소개서 PDF
