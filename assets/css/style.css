@@ -274,7 +274,7 @@ footer .fl{display:flex;flex-wrap:wrap;gap:6px 18px}
 .qp-launch{position:fixed;right:calc(20px + env(safe-area-inset-right,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:70;display:flex;align-items:center;gap:10px;height:54px;padding:0 22px 0 8px;border:0;border-radius:999px;background:var(--ink);color:var(--bg);font:inherit;font-weight:600;font-size:15px;cursor:pointer;box-shadow:0 12px 28px rgba(0,0,0,.2);transition:transform .2s,opacity .2s}
 .qp-launch:hover{transform:translateY(-2px)}
 .qp-launch .ic{width:38px;height:38px;border-radius:50%;background:var(--lime);color:var(--lime-ink);display:grid;place-items:center}
-.qp-launch .ic svg,.qp-head .ic svg{width:16px;height:18px}
+.qp-launch .ic svg,.qp-head .ic svg{width:22px;height:22px}
 .qp-open .qp-launch{opacity:0;pointer-events:none}
 @media (max-width:560px){.qp-launch{height:48px;padding-right:18px;font-size:14px}.qp-launch .ic{width:34px;height:34px}}
 
@@ -299,7 +299,7 @@ footer .fl{display:flex;flex-wrap:wrap;gap:6px 18px}
 .qp-spin{width:38px;height:38px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--ink);animation:qpspin .9s linear infinite}
 @keyframes qpspin{to{transform:rotate(360deg)}}
 .qp-off .big{width:56px;height:56px;border-radius:16px;background:var(--ink);color:var(--lime);display:grid;place-items:center}
-.qp-off .big svg{width:24px;height:28px}
+.qp-off .big svg{width:30px;height:30px}
 .qp-off dl{margin:6px 0 0;display:grid;gap:0;width:100%;max-width:300px;border-top:1px solid var(--line);text-align:left}
 .qp-off dl div{display:grid;grid-template-columns:64px 1fr;gap:8px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
 .qp-off dt{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;color:var(--muted);padding-top:2px}
