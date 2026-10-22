@@ -3,6 +3,7 @@
 window.CL_FORMATS = [
  {
   "id": "solo",
+  "name": "1인 강의형",
   "eyebrow": "FORMAT 01 · SOLO LECTURE",
   "title": "강사가 직접 전달하는<br>1인 강의형",
   "lead": "강사 한 명이 카메라를 보고 설명하는 가장 기본적이고 범용적인 포맷입니다. 직무·교양 전반에 적합합니다.",
@@ -35,6 +36,7 @@ window.CL_FORMATS = [
  },
  {
   "id": "storytelling",
+  "name": "스토리텔링형",
   "eyebrow": "FORMAT 02 · STORYTELLING",
   "title": "이야기로 몰입시키는<br>스토리텔링형",
   "lead": "내레이션과 영상으로 개념을 이야기처럼 전개합니다. 동기 부여와 개념 이해에 강합니다.",
@@ -66,6 +68,7 @@ window.CL_FORMATS = [
  },
  {
   "id": "drama",
+  "name": "재연 드라마형",
   "eyebrow": "FORMAT 03 · REENACTMENT DRAMA",
   "title": "상황을 연기로 재현하는<br>재연 드라마형",
   "lead": "배우의 연기로 현실 상황을 재현합니다. 윤리·고객응대·안전 교육처럼 상황 판단이 중요한 주제에 강합니다.",
@@ -97,6 +100,7 @@ window.CL_FORMATS = [
  },
  {
   "id": "interview",
+  "name": "인터뷰형",
   "eyebrow": "FORMAT 04 · INTERVIEW",
   "title": "전문가의 답을 끌어내는<br>인터뷰형",
   "lead": "진행자가 전문가에게 질문하는 1:다 비대칭 구조입니다. 신뢰도 높은 지식 전달에 적합합니다.",
@@ -128,6 +132,7 @@ window.CL_FORMATS = [
  },
  {
   "id": "talkshow",
+  "name": "대담·토크형",
   "eyebrow": "FORMAT 05 · PANEL TALK",
   "title": "여러 관점이 부딪히는<br>대담·토크형",
   "lead": "둘 이상이 대등하게 의견을 주고받습니다. 정답이 갈리는 시사·트렌드 주제에 적합합니다.",
@@ -159,6 +164,7 @@ window.CL_FORMATS = [
  },
  {
   "id": "demo",
+  "name": "현장·실습 시연형",
   "eyebrow": "FORMAT 06 · HANDS-ON DEMO",
   "title": "과정을 직접 보여주는<br>현장·실습 시연형",
   "lead": "실제 작업·실습 과정을 단계별로 시연합니다. 기술·실무 절차 교육에 가장 강합니다.",
@@ -190,6 +196,7 @@ window.CL_FORMATS = [
  },
  {
   "id": "motiongraphic",
+  "name": "모션그래픽형",
   "eyebrow": "FORMAT 07 · MOTION GRAPHICS",
   "title": "그래픽으로 설명하는<br>모션그래픽형",
   "lead": "출연자 없이 그래픽·애니메이션으로 설명합니다. 추상 개념과 데이터 시각화에 강합니다.",
@@ -221,6 +228,7 @@ window.CL_FORMATS = [
  },
  {
   "id": "onboarding",
+  "name": "온보딩·매뉴얼형",
   "eyebrow": "FORMAT 08 · ONBOARDING & MANUAL",
   "title": "처음 맡는 사람도 그대로 따라 하는<br>온보딩·매뉴얼형",
   "lead": "업무 절차와 제품 사용법을 실제 수행 순서대로 담아, 신규 담당자와 사용자가 옆에서 알려주는 사람 없이도 스스로 따라 할 수 있게 만드는 포맷입니다.",

@@ -123,7 +123,7 @@ print(total([3, 5, 7]))</pre>
         <div class="fd-info"><span class="fd-tag">${x.tag}</span><h4>${x.h}</h4><p>${x.p}</p><ul>${x.li.map(l => `<li>${l}</li>`).join('')}</ul></div>
         <div class="fd-vid"><video controls playsinline preload="none"><source src="${media}${x.video}" type="video/mp4"></video><button class="fd-ph" type="button" aria-label="${x.h.replace(/<[^>]+>/g,' ')} 영상 재생"><span>▶</span></button></div>
       </section>`).join('') +
-      `<div class="fd-foot"><span>이 포맷으로 제작하고 싶으신가요?</span><button class="btn primary" type="button" data-quote>견적 문의</button></div>`;
+      `<div class="fd-foot"><span>「${f.name}」 포맷으로 제작하고 싶으신가요? 유형이 정해진 상태로 견적 문의가 이어집니다.</span><button class="btn primary" type="button" data-quote data-format="${f.id}">견적 문의</button></div>`;
     fmtBody.querySelectorAll('.fd-vid').forEach(w => {
       const v = w.querySelector('video'), ph = w.querySelector('.fd-ph');
       ph.addEventListener('click', () => { w.classList.add('ready'); const pr = v.play(); if (pr && pr.catch) pr.catch(() => w.classList.add('fail')); });
