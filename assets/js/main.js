@@ -32,11 +32,11 @@
     {g:'SOLUTION', n:'CDMS', k:'제작관리 시스템', h:'CDMS', p:'스토리보드부터 검수까지, 제작 과정 전체를 발주처와 함께 봅니다.', tags:['차시별 공정 관리','검수 의견 추적','버전 이력'], c:'var(--lav)', v:'cdms'},
     {g:'SOLUTION', n:'LMS', k:'위탁교육 플랫폼', h:'LMS', p:'기관별로 독립 운영하는 xAPI 기반 위탁교육 플랫폼입니다.', tags:['멀티테넌트','xAPI','내부 테스트 중'], c:'var(--mint)', v:'lms'},
     {g:'SOLUTION', n:'저작도구', k:'콘텐츠 저작도구', h:'저작도구', p:'제작 템플릿과 인터랙션을 담당자가 직접 편집합니다.', tags:['준비 중'], c:'var(--peach)', v:'author'},
-    {g:'INTERACTIVE', n:'비디오 퀴즈', k:'인터랙티브', h:'비디오 퀴즈', p:'영상 중간에 문제를 띄워 이해도를 확인하고 다음 장면으로 넘어갑니다.', tags:['구간 정지','즉시 피드백'], c:'var(--lime)', v:'quiz'},
-    {g:'INTERACTIVE', n:'의사결정 시나리오', k:'인터랙티브', h:'의사결정 시나리오', p:'학습자의 선택에 따라 이야기가 갈라지고 결과가 달라집니다.', tags:['분기형 전개','결과별 해설'], c:'var(--lav)', v:'branch'},
-    {g:'INTERACTIVE', n:'프로그래밍 교육', k:'인터랙티브', h:'프로그래밍 교육', p:'강의 화면 옆에서 코드를 직접 실행하고 결과를 확인합니다.', tags:['브라우저 실습','자동 채점'], c:'var(--mint)', v:'code'},
-    {g:'INTERACTIVE', n:'모바일 숏폼', k:'인터랙티브', h:'모바일 숏폼', p:'세로 화면에 맞춘 1~3분 단위 마이크로러닝입니다.', tags:['세로형 9:16','짧은 복습'], c:'var(--peach)', v:'shorts'},
-    {g:'INTERACTIVE', n:'배리어프리', k:'인터랙티브', h:'배리어프리', p:'자막·수어·화면해설로 누구나 같은 내용을 학습합니다.', tags:['폐쇄자막','수어 영상','화면해설'], c:'var(--lime)', v:'a11y'}
+    {g:'INTERACTIVE', n:'비디오 퀴즈', k:'인터랙티브', h:'비디오 퀴즈', p:'영상 핵심 지점마다 5가지 유형의 퀴즈를 배치하는 참여형 인터랙션입니다.', tags:['객관식','OX','단답형','순서 정렬','매칭'], c:'var(--lime)', v:'quiz', x:'video-quiz'},
+    {g:'INTERACTIVE', n:'의사결정 시나리오', k:'인터랙티브', h:'의사결정 시나리오', p:'선택에 따라 장면과 결과가 달라지는 멀티 엔딩 브랜칭 콘텐츠입니다.', tags:['분기형 전개','멀티 엔딩'], c:'var(--lav)', v:'branch', x:'branching'},
+    {g:'INTERACTIVE', n:'프로그래밍 교육', k:'인터랙티브', h:'프로그래밍 교육', p:'영상 시청 중 코드 실행과 AI 코드 리뷰가 연결되는 실습 환경입니다.', tags:['코드 실행','AI 코드 리뷰'], c:'var(--mint)', v:'code', x:'programming'},
+    {g:'INTERACTIVE', n:'모바일 숏폼', k:'인터랙티브', h:'모바일 숏폼', p:'세로 9:16 풀스크린에 맞춘 숏폼 마이크로러닝과 재구성입니다.', tags:['세로형 9:16','마이크로러닝'], c:'var(--peach)', v:'shorts', x:'shorts'},
+    {g:'INTERACTIVE', n:'배리어프리', k:'인터랙티브', h:'배리어프리', p:'자막·색상·확대·속도 조절과 수어·AI 도우미를 통합한 접근성 설계입니다.', tags:['자막·색상·확대','수어','AI 도우미'], c:'var(--lime)', v:'a11y', x:'accessibility'}
   ];
   const V = {
     cdms:`<div class="mock"><div class="bar-t"><i></i><i></i><i></i><span>CDMS · 학교안전법 연수 / 공정 현황</span></div><div class="mb kan">
@@ -89,7 +89,8 @@ print(total([3, 5, 7]))</pre>
     cur = i; t0 = performance.now(); const s = S[i];
     stage.style.setProperty('--panel', s.c);
     stage.innerHTML = `<div class="fade" style="width:100%;display:grid;place-items:center">${V[s.v]}</div>`;
-    detail.innerHTML = `<div class="fade" style="display:grid;gap:12px"><span class="kind">${s.k}</span><h3>${s.h}</h3><p>${s.p}</p><ul>${s.tags.map(x=>`<li>${x}</li>`).join('')}</ul></div>`;
+    detail.innerHTML = `<div class="fade" style="display:grid;gap:12px"><span class="kind">${s.k}</span><h3>${s.h}</h3><p>${s.p}</p><ul>${s.tags.map(x=>`<li>${x}</li>`).join('')}</ul>${s.x ? `<button class="btn primary try" type="button" data-ix="${s.x}">직접 체험하기<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>` : ''}</div>`;
+    stage.classList.toggle('can-try', !!s.x); stage.dataset.ix = s.x || '';
     tabs.querySelectorAll('.tab').forEach(t => { const on = +t.dataset.i === i; t.classList.toggle('on', on); t.setAttribute('aria-selected', on); });
     prog.querySelectorAll('button[data-i]').forEach(b => { const j = +b.dataset.i; b.classList.toggle('done', j < i); b.firstChild.style.width = j < i ? '100%' : '0'; });
   }
@@ -107,6 +108,49 @@ print(total([3, 5, 7]))</pre>
   function setPlay(p){ playing = p; pauseBtn.textContent = p ? '❚❚' : '▶'; pauseBtn.setAttribute('aria-label', p ? '자동 넘김 멈춤' : '자동 넘김 시작'); t0 = performance.now() - (parseFloat(prog.querySelector(`button[data-i="${cur}"] i`).style.width)||0)/100*DUR; }
   pauseBtn.addEventListener('click', () => setPlay(!playing));
   show(0); setPlay(playing); raf = requestAnimationFrame(tick);
+  stage.addEventListener('click', () => { if (stage.dataset.ix) openIx(stage.dataset.ix); });
+
+  /* ---------- 제작 포맷 레이어 팝업 (원본: 카운셀럽 인트로) ---------- */
+  const media = ((window.CL_CONFIG || {}).mediaBase || 'videos/');
+  const F = window.CL_FORMATS || [];
+  const fmtDlg = document.getElementById('fmtDlg'), fmtBody = document.getElementById('fmtBody');
+  document.querySelectorAll('[data-card]').forEach(p => { const f = F.find(x => x.id === p.dataset.card); if (f) p.textContent = f.card; });
+  function stopVideos(root){ root.querySelectorAll('video').forEach(v => v.pause()); }
+  function openFmt(id){
+    const f = F.find(x => x.id === id); if (!f) return;
+    fmtBody.innerHTML = `<header class="fd-head"><p class="eyebrow">${f.eyebrow}</p><h3 id="fmtT">${f.title}</h3><p>${f.lead}</p></header>` +
+      f.sections.map((x, i) => `<section class="fd-sec${i % 2 ? ' flip' : ''}">
+        <div class="fd-info"><span class="fd-tag">${x.tag}</span><h4>${x.h}</h4><p>${x.p}</p><ul>${x.li.map(l => `<li>${l}</li>`).join('')}</ul></div>
+        <div class="fd-vid"><video controls playsinline preload="none"><source src="${media}${x.video}" type="video/mp4"></video><button class="fd-ph" type="button" aria-label="${x.h.replace(/<[^>]+>/g,' ')} 영상 재생"><span>▶</span></button></div>
+      </section>`).join('') +
+      `<div class="fd-foot"><span>이 포맷으로 제작하고 싶으신가요?</span><button class="btn primary" type="button" data-quote>견적 문의</button></div>`;
+    fmtBody.querySelectorAll('.fd-vid').forEach(w => {
+      const v = w.querySelector('video'), ph = w.querySelector('.fd-ph');
+      ph.addEventListener('click', () => { w.classList.add('ready'); const pr = v.play(); if (pr && pr.catch) pr.catch(() => w.classList.add('fail')); });
+      v.addEventListener('error', () => w.classList.add('fail'), true);
+    });
+    fmtBody.scrollTop = 0; fmtDlg.showModal();
+  }
+  document.querySelectorAll('[data-fmt]').forEach(b => b.addEventListener('click', () => openFmt(b.dataset.fmt)));
+  fmtDlg.addEventListener('close', () => stopVideos(fmtBody));
+
+  /* ---------- 인터랙티브 기능 레이어 팝업 (interactive/*.html) ---------- */
+  const ixDlg = document.getElementById('ixDlg'), ixFrame = document.getElementById('ixFrame'),
+        ixT = document.getElementById('ixT'), ixExt = document.getElementById('ixExt');
+  function openIx(x){
+    const s = S.find(y => y.x === x); if (!s) return;
+    if (playing) setPlay(false);
+    ixT.textContent = s.h; ixExt.href = `interactive/${x}.html`;
+    ixFrame.src = `interactive/${x}.html?embed=1`;
+    ixDlg.showModal();
+  }
+  document.addEventListener('click', e => { const b = e.target.closest('[data-ix]'); if (b) { e.stopPropagation(); openIx(b.dataset.ix); } });
+  ixDlg.addEventListener('close', () => { ixFrame.src = 'about:blank'; });
+
+  /* 팝업 공통: 닫기 버튼, 바깥 누르면 닫힘, 견적 문의 누르면 팝업 닫고 견적 패널 */
+  [fmtDlg, ixDlg].forEach(d => {
+    d.addEventListener('click', e => { if (e.target === d || e.target.closest('[data-close]')) d.close(); if (e.target.closest('[data-quote]')) d.close(); });
+  });
 
   /* ---------- marquee duplicate ---------- */
   document.querySelectorAll('.track').forEach(track => {
