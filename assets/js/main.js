@@ -12,9 +12,9 @@
     {no:'03', t:'LMS · 위탁교육 플랫폼', st:['beta','내부 테스트 중'],
      d:'여러 기관이 각자의 교육 사이트를 독립적으로 운영하도록 설계한 위탁교육 플랫폼입니다. 학습 이력은 xAPI 표준으로 기록합니다.',
      l:['멀티테넌트: 기관별 사이트·회원·과정 분리 운영','xAPI 기반 학습 이력 수집','현재 개발 서버에서 내부 테스트 진행 중']},
-    {no:'04', t:'이러닝 콘텐츠 저작도구', st:['plan','준비 중'],
-     d:'제작 현장에서 반복해 쓰던 화면 템플릿과 인터랙션을 담당자가 직접 편집할 수 있는 도구로 정리하고 있습니다.',
-     l:['세부 사양은 확정 후 공개 예정']}
+    {no:'04', t:'화이트보드 · 협력학습 도구', st:['live','납품 실적'],
+     d:'교사와 학습자가 한 화면에서 함께 쓰고 그리며 의견을 나누는 협력학습용 화이트보드입니다. 수업과 연수에서 모둠 활동·토론·아이디어 정리에 씁니다.',
+     l:['NE능률 화이트보드 솔루션 납품','세부 기능과 화면은 자료 정리 후 공개 예정']}
   ];
   const dlg = document.getElementById('dlg'), body = document.getElementById('dlgBody');
   document.querySelectorAll('.biz').forEach(b => b.addEventListener('click', () => {
@@ -31,7 +31,7 @@
   const S = [
     {g:'SOLUTION', n:'CDMS', k:'제작관리 시스템', h:'CDMS', p:'스토리보드부터 검수까지, 제작 과정 전체를 발주처와 함께 봅니다.', tags:['차시별 공정 관리','검수 의견 추적','버전 이력'], c:'var(--lav)', v:'cdms'},
     {g:'SOLUTION', n:'LMS', k:'위탁교육 플랫폼', h:'LMS', p:'기관별로 독립 운영하는 xAPI 기반 위탁교육 플랫폼입니다.', tags:['멀티테넌트','xAPI','내부 테스트 중'], c:'var(--mint)', v:'lms'},
-    {g:'SOLUTION', n:'저작도구', k:'콘텐츠 저작도구', h:'저작도구', p:'제작 템플릿과 인터랙션을 담당자가 직접 편집합니다.', tags:['준비 중'], c:'var(--peach)', v:'author'},
+    {g:'SOLUTION', n:'화이트보드', k:'협력학습 도구', h:'화이트보드', p:'교사와 학습자가 한 화면에서 함께 쓰고 그리며 생각을 나눕니다.', tags:['실시간 협업','모둠 활동','NE능률 납품'], c:'var(--peach)', v:'board'},
     {g:'INTERACTIVE', n:'비디오 퀴즈', k:'인터랙티브', h:'비디오 퀴즈', p:'영상 핵심 지점마다 5가지 유형의 퀴즈를 배치하는 참여형 인터랙션입니다.', tags:['객관식','OX','단답형','순서 정렬','매칭'], c:'var(--lime)', v:'quiz', x:'video-quiz'},
     {g:'INTERACTIVE', n:'의사결정 시나리오', k:'인터랙티브', h:'의사결정 시나리오', p:'선택에 따라 장면과 결과가 달라지는 멀티 엔딩 브랜칭 콘텐츠입니다.', tags:['분기형 전개','멀티 엔딩'], c:'var(--lav)', v:'branch', x:'branching'},
     {g:'INTERACTIVE', n:'프로그래밍 교육', k:'인터랙티브', h:'프로그래밍 교육', p:'영상 시청 중 코드 실행과 AI 코드 리뷰가 연결되는 실습 환경입니다.', tags:['코드 실행','AI 코드 리뷰'], c:'var(--mint)', v:'code', x:'programming'},
@@ -49,10 +49,14 @@
       <div class="row"><span>기록관리 실무</span><span class="pbar"><i style="width:54%"></i></span><span class="mono">54%</span></div>
       <div class="row"><span>학교안전법 이해</span><span class="pbar"><i style="width:31%"></i></span><span class="mono">31%</span></div>
       <div class="row"><span class="mono">xAPI · "completed" 128건 기록</span><span></span><span></span></div></div></div>`,
-    author:`<div class="mock"><div class="bar-t"><i></i><i></i><i></i><span>저작도구 · 화면 편집</span></div><div class="mb ed">
-      <div class="tl"><i></i><i class="on"></i><i></i><i></i></div>
-      <div class="cv"><b style="left:8%;top:10%;width:60%;height:18%">제목 텍스트</b><b style="left:8%;top:36%;width:40%;height:44%">이미지</b><b style="left:54%;top:36%;width:38%;height:20%;background:var(--lime);color:var(--lime-ink)">퀴즈 버튼</b></div>
-      <div class="pr"><span class="mono">속성</span><i></i><i style="width:70%"></i><i></i><i style="width:50%"></i></div></div></div>`,
+    board:`<div class="mock"><div class="bar-t"><i></i><i></i><i></i><span>화이트보드 · 3모둠 토론판</span></div><div class="mb wb">
+      <svg class="wb-ink" viewBox="0 0 400 200" aria-hidden="true"><path d="M40 150 C90 110 120 170 170 128 S250 90 290 120" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="330" cy="70" r="34" fill="none" stroke="currentColor" stroke-width="2.5" stroke-dasharray="6 6"/></svg>
+      <span class="note" style="left:6%;top:10%;background:var(--lime)">문제 정의</span>
+      <span class="note" style="left:34%;top:18%;background:var(--lav)">원인 ①</span>
+      <span class="note" style="left:58%;top:8%;background:var(--mint)">원인 ②</span>
+      <span class="note" style="left:22%;top:58%;background:var(--peach)">해결 아이디어</span>
+      <span class="cur" style="left:52%;top:52%"><b>학습자 A</b></span>
+      <span class="cur t" style="left:76%;top:70%"><b>교사</b></span></div></div>`,
     quiz:`<div class="mock" style="max-width:520px"><div class="mb"><div class="vid"><div class="q"><b style="font-size:13px">Q. 처리과 기록물 이관 시기는?</b><div>생산 후 즉시</div><div class="ok">생산연도 종료 후 2년 이내 ✓</div><div>보존기간 만료 후</div></div><div class="tlb"><i></i><b style="left:46%"></b></div></div></div></div>`,
     branch:`<div class="mock" style="max-width:520px"><div class="mb"><svg viewBox="0 0 480 240" width="100%" role="img" aria-label="선택에 따라 갈라지는 시나리오 흐름">
       <g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M110 120 C170 120 170 60 230 60"/><path d="M110 120 C170 120 170 180 230 180"/><path d="M330 60 C370 60 370 40 400 40"/><path d="M330 60 C370 60 370 90 400 90"/></g>

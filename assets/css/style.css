@@ -371,3 +371,33 @@ dialog.ix-dlg[open]{display:grid;grid-template-rows:auto 1fr}
 .q-link-a{display:flex;flex-wrap:wrap;gap:6px;padding:8px 14px 12px}
 .q-link-a span{font-size:12px;padding:3px 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface)}
 .q-link-a span:first-child{border-color:var(--ink);font-weight:600}
+
+/* 화이트보드 목업 */
+.wb{position:relative;min-height:230px;background-color:var(--surface);background-image:radial-gradient(var(--dot) 1px,transparent 1px);background-size:16px 16px;color:var(--ink)}
+.wb-ink{position:absolute;inset:8% 4%;width:92%;height:84%;opacity:.55}
+.wb .note{position:absolute;padding:14px 12px 22px;min-width:88px;font-size:12px;font-weight:600;color:#15171A;border:1px solid var(--ink);border-radius:4px;box-shadow:3px 3px 0 var(--ink);transform:rotate(-2deg)}
+.wb .note:nth-of-type(2n){transform:rotate(2deg)}
+.wb .cur{position:absolute;width:14px;height:14px;border-left:2px solid var(--ink);border-top:2px solid var(--ink);transform:rotate(-12deg)}
+.wb .cur b{position:absolute;left:10px;top:10px;white-space:nowrap;font-size:10.5px;font-weight:600;padding:2px 7px;border-radius:99px;background:var(--ink);color:var(--bg);transform:rotate(12deg)}
+.wb .cur.t b{background:var(--lime);color:var(--lime-ink);border:1px solid var(--ink)}
+
+/* 뉴스레터 (푸터 위) */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+footer .wrap.nl{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:32px;align-items:start;padding-bottom:36px;margin-bottom:36px;border-bottom:1px solid var(--line);color:var(--ink)}
+@media (max-width:900px){footer .wrap.nl{grid-template-columns:1fr;gap:20px}}
+.nl-copy{display:grid;gap:10px}
+.nl-copy h2{font-size:clamp(22px,2.2vw,28px);font-weight:700}
+.nl-copy > p:last-child{color:var(--muted);font-size:14.5px;max-width:34em}
+.nl-form{display:grid;gap:10px;padding:0;border:0;background:none;border-radius:0}
+.nl-row{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) auto;gap:8px}
+@media (max-width:620px){.nl-row{grid-template-columns:1fr}}
+.nl-form input[type=email],.nl-form input[type=text]{font:inherit;font-size:15px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:0 18px;height:52px;width:100%}
+.nl-form input:focus{outline:2px solid var(--ink);outline-offset:0;border-color:transparent}
+.nl-agree{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--muted);font-weight:400;cursor:pointer}
+.nl-agree input{margin-top:3px;accent-color:var(--ink);width:auto;padding:0;flex:none}
+.nl-terms{font-size:12.5px;color:var(--muted)}
+.nl-terms summary{cursor:pointer;width:max-content}
+.nl-terms p{margin-top:6px;line-height:1.6}
+.nl-msg{font-size:13.5px;min-height:1.4em}
+.nl-msg.ok{color:var(--ink)}
+.nl-msg.err{color:#C2412D}
