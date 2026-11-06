@@ -1,5 +1,5 @@
 /* 제작 포맷 8종 상세 (원본: 카운셀럽 인트로 counseleb.com/contents/intro, 2026-10-22 가져옴)
- * 영상 파일 이름만 적고, 주소 앞부분은 config.js 의 mediaBase 를 씁니다. */
+ * video 는 원본 영상 이름이며, 사이트에서는 같은 이름의 썸네일(assets/img/thumbs/*.jpg)만 보여 줍니다. */
 window.CL_FORMATS = [
  {
   "id": "solo",

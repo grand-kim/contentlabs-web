@@ -15,7 +15,10 @@ web/
 ├─ assets/js/newsletter.js   뉴스레터 구독 폼
 ├─ assets/js/formats-data.js 제작 포맷 8종 상세 내용 (카운셀럽 인트로에서 가져옴)
 ├─ interactive/          인터랙티브 기능 5종 (카운셀럽 인트로 소스를 옮겨 사이트 배색으로 변경)
-├─ assets/img/clients/   레퍼런스 로고 9종 (아래 출처 참고)
+├─ assets/img/clients/   레퍼런스 로고 34종 (아래 출처 참고)
+├─ assets/img/thumbs/    제작 포맷 사례 대표 장면(영상 대신 이미지로만 노출)
+├─ assets/docs/          회사소개서 PDF (첫 화면 「회사소개서 받기」)
+├─ DOMAIN.md             contentlabs.co.kr 도메인 연결 안내
 ├─ assets/img/brand/     콘텐츠랩스 로고·심볼(SVG), 파비콘
 └─ README.md
 ```
@@ -33,30 +36,31 @@ web/
 | 5 | `#contact` | 연락처 + 「3분 견적 요청」 카드 (AI 산출 → PM 검토 → 견적 링크 발송) |
 | - | `footer` | 뉴스레터 구독(`#newsletter`) + 회사 정보 (현재 모두 '입력예정') |
 
-## 남은 작업
+## 남은 작업 (2026-11-07 기준)
 
-- 경기도학교안전공제회 로고: 현재 저해상도 심볼(잡코리아 기업정보 이미지) → 공제회에서 원본 CI 받아 교체
-- 그 밖의 발주처(텍스트 줄): 필요 시 로고 이미지로 교체
-- 회사소개서 버튼: PDF 파일 연결
-- 푸터 회사 정보: 확정되면 '입력예정' 자리에 입력
-- 샘플 영상: 지금은 카운셀럽 서버 영상을 불러옴(`config.js`의 `mediaBase`). 자체 서버로 옮기면 `mediaBase`만 바꾸면 됨
+- 도메인 연결: `DOMAIN.md` 참고 (cPanel DNS 변경은 직접 로그인해서 진행)
+- 솔루션 데모: `config.js`의 `demo`에 CDMS·LMS·화이트보드 체험 주소·체험 계정을 넣으면 「데모 열기」로 바뀜 (지금은 「데모 신청」 메일)
+- 견적 알림 메일: 메일플러그 SMTP 계정을 받으면 챗봇 Secrets에 설정
+- 문의·푸터 회사 정보: 확정되면 '입력예정' 자리에 입력
 - 인터랙티브 「VIEW DEMO」 영상(video-quiz-01 등)은 원본에도 파일이 없어 '준비 중'으로 표시됨
-- 솔루션 화면: 그림 목업 → 실제 영상/캡처로 교체 가능
-- 견적 챗봇: 연결 완료 (https://elearning-quote-bot-contentlabs.streamlit.app)
+- 솔루션 화면: 그림 목업 → 실제 캡처로 교체 가능
 
-## 레퍼런스 로고 출처 (assets/img/clients)
+## 레퍼런스 로고 (assets/img/clients)
 
-| 파일 | 기관 | 출처 |
-|---|---|---|
-| ggssia.png | 경기도학교안전공제회 | 잡코리아 기업정보 로고(심볼, 저해상도) — 교체 필요 |
-| yuanta.png | 유안타증권 | 유안타증권 공식 CI 원본(yuantakorea.com, YuantaLogo.pdf)에서 고해상도 출력 |
-| hansung.png | 한성자동차 | mb.hansung.co.kr 헤더 로고 (흰색 → 짙은 색으로 변환) |
-| kca.png | 한국소비자원 | kca.go.kr 헤더 로고 |
-| soil.svg | S-OIL | Wikimedia Commons (S-OIL Logo.svg) |
-| koica.png | KOICA | Wikimedia Commons (KOICA official logo in english.png, CC BY-SA 3.0) |
-| nia.png | 한국지능정보사회진흥원 | Wikimedia Commons (한국지능정보사회진흥원 혼합 가로.jpg, CC BY 4.0) |
-| tatadaewoo.svg | 타타대우상용차 | Wikimedia Commons (Tata daewoo company logo.svg) — 2024.11 사명 변경(타타대우모빌리티) 전 로고 |
-| hanon.svg | 한온시스템 | Wikimedia Commons (Logo hanon.svg) |
+- 1줄(기업·공공): 경기도학교안전공제회, 유안타증권, 한성자동차, 한국소비자원, S-OIL, KOICA, NIA, 타타대우모빌리티, 한온시스템, 현대자동차, 삼성물산, 신한은행, 한화생명, 카카오모빌리티, 롯데호텔, 한국은행, 한국관광공사
+- 2줄(공공·대학·기관): 국가기록원, 보건복지부, 공정거래위원회, 국립중앙의료원, 국립암센터, 한국자활연수원, 한국장학재단, 한국청소년상담복지개발원, 초록우산 어린이재단, 서울대학교, 연세대학교, 중앙대학교, 아주대학교, 한국항공대학교, K-MOOC, 대한응급의학회
+- 2026-11-07 추가분은 각 기관 공식 홈페이지 이미지와 Wikimedia Commons에서 받아 배경을 투명하게 정리(높이 88px PNG). 공식 CI 원본을 받으면 같은 이름으로 덮어쓰면 됨
+- 경기도학교안전공제회: 가로형 로고로 교체(인크루트 기업정보 이미지). 원본 CI를 받으면 교체 권장
+- 타타대우: 2024.11 사명 변경 후 로고(TATA DAEWOO MOBILITY)로 교체. 이전 로고 `tatadaewoo.svg`는 쓰지 않음
+- 남부연수원은 로고를 찾지 못해 이번 목록에서 뺌
+- 기존 9종 출처: yuanta(공식 CI PDF), hansung(mb.hansung.co.kr), kca(kca.go.kr), soil·koica·nia·hanon(Wikimedia Commons)
+
+## 제작 포맷 사례 (영상 → 썸네일)
+
+- 포맷 팝업은 영상을 재생하지 않고 대표 장면 이미지만 보여 줌 (`assets/img/thumbs/<영상 이름>.jpg`)
+- 원본 영상(`D:\01_프로젝트\11_카운셀럽 홈페이지\intro\videos`)의 30% 지점에서 추출. 다른 장면을 쓰려면 같은 이름의 jpg(1280×720)로 바꾸면 됨
+- onboarding-02는 원본 영상이 없어 '준비 중'으로 표시
+- 견적 챗봇의 샘플도 같은 이미지를 씀(챗봇 `formats.py`의 THUMB_BASE)
 
 ## 콘텐츠랩스 로고
 
@@ -92,14 +96,14 @@ git push -u origin main
 ```
 
 - 공개 범위: 이 폴더에는 비밀 정보가 없어 공개(Public)도 가능합니다. 시안 단계라 외부에 보이지 않게 하려면 비공개로 두세요.
-- 실제 서비스 반영(contentlabs.co.kr)은 기존 웹호스팅에 이 폴더를 올리는 방식으로 별도 진행합니다.
+- 실제 서비스 반영(contentlabs.co.kr): `DOMAIN.md` 참고
 - 챗봇은 별도 저장소(`contentlabs-quote-bot`, 비공개)입니다. 두 저장소는 `assets/js/config.js`의 `chatbotUrl` 한 줄로만 연결됩니다.
 
 ## 회사 정보 기준 (2026-10-20)
 
 - 대표: 윤태원 / 문의 이메일: ceo@ailp.kr / 전화: 050-5491-1111
 - 주소·사업자등록번호: contentlabs.co.kr 기준
-- 추후 업데이트: 경기도학교안전공제회 원본 로고, 회사소개서 PDF
+- 회사소개서: `assets/docs/contentlabs-company-profile-2026.pdf` (`콘텐츠랩스_회사소개서_2026.pptx`를 PDF로 변환). 새 버전이 나오면 같은 이름으로 덮어쓰기
 
 ## 제작 포맷·인터랙티브 (2026-10-22 추가)
 
@@ -123,3 +127,12 @@ git push -u origin main
 - 사업영역 04: 이러닝 콘텐츠 저작도구 → **화이트보드(협력학습 도구)**. NE능률 납품 실적만 적었고, 세부 기능·화면은 자료를 받으면 채움 (`main.js`의 `M[3]`, 솔루션 탭 `board`)
 - 레퍼런스: 로고가 있는 발주처만 노출. 텍스트 발주처 줄은 `hidden` (로고를 받으면 로고 줄로 옮김)
 - 뉴스레터: 푸터 위 구독 폼 + 상단 메뉴 「뉴스레터」. `config.js`의 `newsletter.action`에 구독 신청 주소를 넣으면 실제로 신청을 받음 (비어 있으면 '곧 열립니다' 안내)
+
+## 2026-11-07 변경
+
+- 레퍼런스 로고 34종으로 확대(2줄), 경기도학교안전공제회·타타대우모빌리티 로고 교체
+- 제작 포맷 사례: 영상 재생 → 대표 장면 이미지만 노출 (유튜브 연결 준비분 제거)
+- 「회사소개서 받기」 → 회사소개서 PDF 내려받기
+- 솔루션 탭(CDMS·LMS·화이트보드)에 「데모 체험하기」 추가 (`config.js`의 `demo`)
+- 견적 패널: 사이트가 다크 모드면 챗봇도 다크 모드로 표시
+- 도메인 연결 안내 `DOMAIN.md` 추가

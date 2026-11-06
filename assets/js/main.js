@@ -29,9 +29,9 @@
 
   /* ---------- solutions ---------- */
   const S = [
-    {g:'SOLUTION', n:'CDMS', k:'제작관리 시스템', h:'CDMS', p:'스토리보드부터 검수까지, 제작 과정 전체를 발주처와 함께 봅니다.', tags:['차시별 공정 관리','검수 의견 추적','버전 이력'], c:'var(--lav)', v:'cdms'},
-    {g:'SOLUTION', n:'LMS', k:'위탁교육 플랫폼', h:'LMS', p:'기관별로 독립 운영하는 xAPI 기반 위탁교육 플랫폼입니다.', tags:['멀티테넌트','xAPI','내부 테스트 중'], c:'var(--mint)', v:'lms'},
-    {g:'SOLUTION', n:'화이트보드', k:'협력학습 도구', h:'화이트보드', p:'교사와 학습자가 한 화면에서 함께 쓰고 그리며 생각을 나눕니다.', tags:['실시간 협업','모둠 활동','NE능률 납품'], c:'var(--peach)', v:'board'},
+    {g:'SOLUTION', n:'CDMS', k:'제작관리 시스템', h:'CDMS', p:'스토리보드부터 검수까지, 제작 과정 전체를 발주처와 함께 봅니다.', tags:['차시별 공정 관리','검수 의견 추적','버전 이력'], c:'var(--lav)', v:'cdms', d:'cdms'},
+    {g:'SOLUTION', n:'LMS', k:'위탁교육 플랫폼', h:'LMS', p:'기관별로 독립 운영하는 xAPI 기반 위탁교육 플랫폼입니다.', tags:['멀티테넌트','xAPI','내부 테스트 중'], c:'var(--mint)', v:'lms', d:'lms'},
+    {g:'SOLUTION', n:'화이트보드', k:'협력학습 도구', h:'화이트보드', p:'교사와 학습자가 한 화면에서 함께 쓰고 그리며 생각을 나눕니다.', tags:['실시간 협업','모둠 활동','NE능률 납품'], c:'var(--peach)', v:'board', d:'board'},
     {g:'INTERACTIVE', n:'비디오 퀴즈', k:'인터랙티브', h:'비디오 퀴즈', p:'영상 핵심 지점마다 5가지 유형의 퀴즈를 배치하는 참여형 인터랙션입니다.', tags:['객관식','OX','단답형','순서 정렬','매칭'], c:'var(--lime)', v:'quiz', x:'video-quiz'},
     {g:'INTERACTIVE', n:'의사결정 시나리오', k:'인터랙티브', h:'의사결정 시나리오', p:'선택에 따라 장면과 결과가 달라지는 멀티 엔딩 브랜칭 콘텐츠입니다.', tags:['분기형 전개','멀티 엔딩'], c:'var(--lav)', v:'branch', x:'branching'},
     {g:'INTERACTIVE', n:'프로그래밍 교육', k:'인터랙티브', h:'프로그래밍 교육', p:'영상 시청 중 코드 실행과 AI 코드 리뷰가 연결되는 실습 환경입니다.', tags:['코드 실행','AI 코드 리뷰'], c:'var(--mint)', v:'code', x:'programming'},
@@ -93,7 +93,7 @@ print(total([3, 5, 7]))</pre>
     cur = i; t0 = performance.now(); const s = S[i];
     stage.style.setProperty('--panel', s.c);
     stage.innerHTML = `<div class="fade" style="width:100%;display:grid;place-items:center">${V[s.v]}</div>`;
-    detail.innerHTML = `<div class="fade" style="display:grid;gap:12px"><span class="kind">${s.k}</span><h3>${s.h}</h3><p>${s.p}</p><ul>${s.tags.map(x=>`<li>${x}</li>`).join('')}</ul>${s.x ? `<button class="btn primary try" type="button" data-ix="${s.x}">직접 체험하기<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>` : ''}</div>`;
+    detail.innerHTML = `<div class="fade" style="display:grid;gap:12px"><span class="kind">${s.k}</span><h3>${s.h}</h3><p>${s.p}</p><ul>${s.tags.map(x=>`<li>${x}</li>`).join('')}</ul>${s.x ? `<button class="btn primary try" type="button" data-ix="${s.x}">직접 체험하기<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>` : ''}${s.d ? `<button class="btn primary try" type="button" data-demo="${s.d}">데모 체험하기<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>` : ''}</div>`;
     stage.classList.toggle('can-try', !!s.x); stage.dataset.ix = s.x || '';
     tabs.querySelectorAll('.tab').forEach(t => { const on = +t.dataset.i === i; t.classList.toggle('on', on); t.setAttribute('aria-selected', on); });
     prog.querySelectorAll('button[data-i]').forEach(b => { const j = +b.dataset.i; b.classList.toggle('done', j < i); b.firstChild.style.width = j < i ? '100%' : '0'; });
@@ -115,28 +115,48 @@ print(total([3, 5, 7]))</pre>
   stage.addEventListener('click', () => { if (stage.dataset.ix) openIx(stage.dataset.ix); });
 
   /* ---------- 제작 포맷 레이어 팝업 (원본: 카운셀럽 인트로) ---------- */
-  const media = ((window.CL_CONFIG || {}).mediaBase || 'videos/');
+  /* 포트폴리오는 영상을 재생하지 않고 대표 장면(썸네일)만 보여 줍니다.
+   * 썸네일: assets/img/thumbs/<영상 이름>.jpg (원본 영상 30% 지점에서 추출). 파일이 없으면 '준비 중' 표시 */
+  const thumb = v => 'assets/img/thumbs/' + String(v).replace(/\.mp4$/i, '') + '.jpg';
   const F = window.CL_FORMATS || [];
   const fmtDlg = document.getElementById('fmtDlg'), fmtBody = document.getElementById('fmtBody');
   document.querySelectorAll('[data-card]').forEach(p => { const f = F.find(x => x.id === p.dataset.card); if (f) p.textContent = f.card; });
-  function stopVideos(root){ root.querySelectorAll('video').forEach(v => v.pause()); }
   function openFmt(id){
     const f = F.find(x => x.id === id); if (!f) return;
     fmtBody.innerHTML = `<header class="fd-head"><p class="eyebrow">${f.eyebrow}</p><h3 id="fmtT">${f.title}</h3><p>${f.lead}</p></header>` +
       f.sections.map((x, i) => `<section class="fd-sec${i % 2 ? ' flip' : ''}">
         <div class="fd-info"><span class="fd-tag">${x.tag}</span><h4>${x.h}</h4><p>${x.p}</p><ul>${x.li.map(l => `<li>${l}</li>`).join('')}</ul></div>
-        <div class="fd-vid"><video controls playsinline preload="none"><source src="${media}${x.video}" type="video/mp4"></video><button class="fd-ph" type="button" aria-label="${x.h.replace(/<[^>]+>/g,' ')} 영상 재생"><span>▶</span></button></div>
+        <figure class="fd-vid"><img src="${thumb(x.video)}" alt="${x.h.replace(/<[^>]+>/g,' ')} 제작 사례 화면" loading="lazy" draggable="false"><figcaption>제작 사례</figcaption></figure>
       </section>`).join('') +
       `<div class="fd-foot"><span>「${f.name}」 포맷으로 제작하고 싶으신가요? 유형이 정해진 상태로 견적 문의가 이어집니다.</span><button class="btn primary" type="button" data-quote data-format="${f.id}">견적 문의</button></div>`;
-    fmtBody.querySelectorAll('.fd-vid').forEach(w => {
-      const v = w.querySelector('video'), ph = w.querySelector('.fd-ph');
-      ph.addEventListener('click', () => { w.classList.add('ready'); const pr = v.play(); if (pr && pr.catch) pr.catch(() => w.classList.add('fail')); });
-      v.addEventListener('error', () => w.classList.add('fail'), true);
-    });
+    fmtBody.querySelectorAll('.fd-vid img').forEach(im => im.addEventListener('error', () => im.parentElement.classList.add('fail')));
     fmtBody.scrollTop = 0; fmtDlg.showModal();
   }
   document.querySelectorAll('[data-fmt]').forEach(b => b.addEventListener('click', () => openFmt(b.dataset.fmt)));
-  fmtDlg.addEventListener('close', () => stopVideos(fmtBody));
+
+  /* ---------- 솔루션 데모 체험 (config.js 의 demo) ----------
+   * url 이 있으면 체험 계정 안내 + 「데모 열기」, 비어 있으면 「데모 신청」(메일) 안내 */
+  const DEMO = (window.CL_CONFIG || {}).demo || {};
+  const esc = t => String(t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  function openDemo(key){
+    const s = S.find(y => y.d === key); if (!s) return;
+    if (playing) setPlay(false);
+    const d = DEMO[key] || {}, mail = (window.CL_CONFIG || {}).contactEmail || '';
+    const acct = (d.id || d.pw) ? `<dl class="demo-acct">${d.id ? `<div><dt>아이디</dt><dd><code>${esc(d.id)}</code><button type="button" class="copy" data-copy="${esc(d.id)}">복사</button></dd></div>` : ''}${d.pw ? `<div><dt>비밀번호</dt><dd><code>${esc(d.pw)}</code><button type="button" class="copy" data-copy="${esc(d.pw)}">복사</button></dd></div>` : ''}</dl>` : '';
+    body.innerHTML = d.url
+      ? `<span class="st live">데모 운영 중</span><p class="eyebrow">DEMO · ${esc(s.h)}</p><h3 id="dlgT">${esc(s.h)} 데모 체험</h3>
+         <p style="color:var(--muted)">${esc(d.note || '체험용 환경입니다. 입력한 내용은 주기적으로 초기화됩니다.')}</p>${acct}
+         <a class="btn primary" href="${esc(d.url)}" target="_blank" rel="noopener">데모 열기 (새 창)</a>`
+      : `<span class="st beta">데모 준비 중</span><p class="eyebrow">DEMO · ${esc(s.h)}</p><h3 id="dlgT">${esc(s.h)} 데모 신청</h3>
+         <p style="color:var(--muted)">체험용 환경을 준비하고 있습니다. 신청하시면 담당자가 체험 계정과 함께 안내해 드립니다.</p>
+         <div style="display:flex;gap:10px;flex-wrap:wrap">${mail ? `<a class="btn primary" href="mailto:${esc(mail)}?subject=${encodeURIComponent('[데모 신청] ' + s.h)}&body=${encodeURIComponent('기관(회사)명:\n담당자 성함:\n연락처:\n체험 목적:')}">메일로 데모 신청</a>` : ''}<button class="btn ghost" type="button" data-quote>견적 문의로 상담하기</button></div>`;
+    dlg.showModal();
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-demo]'); if (b) { e.stopPropagation(); openDemo(b.dataset.demo); return; }
+    const c = e.target.closest('[data-copy]'); if (c && navigator.clipboard) { navigator.clipboard.writeText(c.dataset.copy).then(() => { c.textContent = '복사됨'; setTimeout(() => c.textContent = '복사', 1500); }); }
+  });
+  dlg.addEventListener('click', e => { if (e.target.closest('[data-quote]')) dlg.close(); });
 
   /* ---------- 인터랙티브 기능 레이어 팝업 (interactive/*.html) ---------- */
   const ixDlg = document.getElementById('ixDlg'), ixFrame = document.getElementById('ixFrame'),
@@ -173,10 +193,6 @@ print(total([3, 5, 7]))</pre>
   addEventListener('scroll', onScroll, {passive:true}); onScroll();
 
   /* ---------- deck button / form ---------- */
-  document.getElementById('deckBtn').addEventListener('click', e => {
-    const b = e.currentTarget; const o = b.innerHTML; b.textContent = '회사소개서 준비 중';
-    setTimeout(() => b.innerHTML = o, 1800);
-  });
 
   /* ---------- cursor ---------- */
   const cur$ = document.getElementById('cursor');

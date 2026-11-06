@@ -10,7 +10,9 @@
   const sub = qp.querySelector('.qp-head small'), subDefault = sub ? sub.textContent : '';
 
   // fmt: 제작 포맷 팝업에서 누른 경우 포맷 id (챗봇이 유형을 미리 정해 두고 상담 시작)
-  const src = fmt => url + (url.includes('?') ? '&' : '?') + 'embed=true&widget=1' + (fmt ? '&format=' + encodeURIComponent(fmt) : '');
+  // 다크 모드: 챗봇은 기기 설정을 그대로 따름. 사이트에서 data-theme 로 강제한 경우에만 theme 를 넘김
+  const theme = () => document.documentElement.dataset.theme || '';
+  const src = fmt => url + (url.includes('?') ? '&' : '?') + 'embed=true&widget=1' + (fmt ? '&format=' + encodeURIComponent(fmt) : '') + (theme() ? '&theme=' + theme() : '');
   const fmtName = fmt => ((window.CL_FORMATS || []).find(f => f.id === fmt) || {}).name;
 
   function open(fmt) {

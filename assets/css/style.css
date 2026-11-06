@@ -77,12 +77,12 @@ footer .logo{align-self:start;padding-top:4px}
 .partners .eyebrow{justify-content:center;margin-bottom:18px}
 .partners .eyebrow::before{display:none}
 .marquee{overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
-.track{display:flex;gap:14px;width:max-content;animation:slide 38s linear infinite}
+.track{display:flex;gap:14px;width:max-content;animation:slide 72s linear infinite}
 .marquee:hover .track{animation-play-state:paused}
 .chip{height:56px;padding-inline:26px;border-radius:14px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;font-weight:600;font-size:15px;white-space:nowrap}
 @keyframes slide{to{transform:translateX(-50%)}}
 .marquee + .marquee{margin-top:12px}
-.track.rev{animation-direction:reverse;animation-duration:60s}
+.track.rev{animation-direction:reverse;animation-duration:68s}
 .logo-tile{flex:none;height:76px;padding-inline:30px;border-radius:14px;background:var(--tile);border:1px solid var(--line);display:flex;align-items:center;gap:10px}
 .logo-tile img{display:block;height:32px;width:auto;max-width:190px;object-fit:contain}
 .logo-tile img.tall{height:44px}
@@ -330,14 +330,9 @@ dialog.fmt-dlg{width:min(1040px,calc(100% - 32px));max-height:calc(100% - 40px);
 .fd-info ul{margin:4px 0 0;padding:0;list-style:none;display:grid;gap:8px}
 .fd-info li{display:grid;grid-template-columns:18px 1fr;gap:6px;font-size:14.5px}
 .fd-info li::before{content:"";width:7px;height:7px;margin-top:9px;border-radius:2px;background:var(--lime);box-shadow:0 0 0 1px var(--ink) inset}
-.fd-vid{position:relative;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#15171A;border:1px solid var(--ink)}
-.fd-vid video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#15171A}
-.fd-ph{all:unset;cursor:pointer;position:absolute;inset:0;display:grid;place-items:center;background:radial-gradient(circle at 50% 50%,#2C302D,#15171A 70%);transition:opacity .3s}
-.fd-ph span{width:68px;height:68px;border-radius:50%;display:grid;place-items:center;background:var(--lime);color:var(--lime-ink);font-size:20px;border:1.5px solid #fff;transition:transform .2s}
-.fd-ph:hover span{transform:scale(1.08)}
-.fd-ph:focus-visible{outline:2px solid var(--lime);outline-offset:-4px}
-.fd-vid.ready .fd-ph{opacity:0;pointer-events:none}
-.fd-vid.fail::after{content:"영상을 불러오지 못했습니다";position:absolute;inset:auto 0 0;padding:10px;text-align:center;font-size:13px;color:#fff;background:rgba(0,0,0,.6)}
+.fd-vid{position:relative;margin:0;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#15171A;border:1px solid var(--ink)}
+.fd-vid img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;user-select:none;-webkit-user-drag:none}
+.fd-vid figcaption{position:absolute;left:12px;top:12px;padding:4px 10px;border-radius:999px;background:rgba(21,23,26,.72);color:#fff;font:600 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.06em}
 .fd-foot{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between;padding:22px 24px;border-radius:18px;background:var(--bg);border:1px solid var(--line);font-weight:600}
 @media (max-width:760px){.fd-in{padding:28px 18px 22px;gap:28px}.fd-sec{grid-template-columns:1fr;gap:18px;padding-top:26px}.fd-sec.flip .fd-info{order:0}}
 
@@ -354,6 +349,14 @@ dialog.ix-dlg[open]{display:grid;grid-template-rows:auto 1fr}
 
 /* 솔루션: 직접 체험하기 */
 .detail .try{justify-self:start;margin-top:8px;height:46px}
+.detail .try + .try{margin-top:0}
+.demo-acct{margin:0;display:grid;gap:8px;padding:14px 16px;border-radius:14px;background:var(--surface);border:1px solid var(--line)}
+.demo-acct div{display:grid;grid-template-columns:72px 1fr;align-items:center;gap:10px}
+.demo-acct dt{font-size:13px;color:var(--muted)}
+.demo-acct dd{margin:0;display:flex;align-items:center;gap:10px}
+.demo-acct code{font:600 15px 'IBM Plex Mono',monospace}
+.demo-acct .copy{all:unset;cursor:pointer;font-size:12px;padding:3px 10px;border-radius:999px;border:1px solid var(--line)}
+.demo-acct .copy:hover{border-color:var(--ink)}
 .stage.can-try{cursor:pointer}
 .stage.can-try::after{content:"클릭해서 직접 체험하기";position:absolute;right:16px;bottom:14px;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;padding:5px 10px;border-radius:99px;background:var(--surface);border:1px solid var(--ink)}
 
@@ -401,3 +404,6 @@ footer .wrap.nl{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:32px;al
 .nl-msg{font-size:13.5px;min-height:1.4em}
 .nl-msg.ok{color:var(--ink)}
 .nl-msg.err{color:#C2412D}
+
+.fd-vid.fail img{display:none}
+.fd-vid.fail::after{content:"제작 사례 화면 준비 중";position:absolute;inset:0;display:grid;place-items:center;font-size:14px;color:#C9CCC4;background:radial-gradient(circle at 50% 50%,#2C302D,#15171A 70%)}
