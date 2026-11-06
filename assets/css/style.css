@@ -407,3 +407,5 @@ footer .wrap.nl{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:32px;al
 
 .fd-vid.fail img{display:none}
 .fd-vid.fail::after{content:"제작 사례 화면 준비 중";position:absolute;inset:0;display:grid;place-items:center;font-size:14px;color:#C9CCC4;background:radial-gradient(circle at 50% 50%,#2C302D,#15171A 70%)}
+.info dd a,.qp-off dd a{color:inherit;text-decoration:none}
+.info dd a:hover,.qp-off dd a:hover{text-decoration:underline;text-underline-offset:3px}
