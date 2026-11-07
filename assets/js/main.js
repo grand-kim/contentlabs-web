@@ -29,8 +29,18 @@
 
   /* ---------- solutions ---------- */
   const S = [
-    {g:'SOLUTION', n:'CDMS', k:'제작관리 시스템', h:'CDMS', p:'스토리보드부터 검수까지, 제작 과정 전체를 발주처와 함께 봅니다.', tags:['차시별 공정 관리','검수 의견 추적','버전 이력'], c:'var(--lav)', v:'cdms', d:'cdms'},
-    {g:'SOLUTION', n:'LMS', k:'위탁교육 플랫폼', h:'LMS', p:'기관별로 독립 운영하는 xAPI 기반 위탁교육 플랫폼입니다.', tags:['멀티테넌트','xAPI','내부 테스트 중'], c:'var(--mint)', v:'lms', d:'lms'},
+    {g:'SOLUTION', n:'CDMS', k:'제작관리 시스템', h:'CDMS', p:'스토리보드부터 검수까지, 제작 과정 전체를 발주처와 함께 봅니다.', tags:['차시별 공정 관리','검수 의견 추적','버전 이력'], c:'var(--lav)', v:'cdms', d:'cdms', dur:14000,
+     url:'AI CDMS · 개발사 담당자 포털', ratio:'1554/705', shots:[
+      {src:'assets/img/solutions/cdms-01-projects.webp', cap:'프로젝트 현황 — 일정 대비 진행률과 지연 산출물'},
+      {src:'assets/img/solutions/cdms-02-matrix.webp', cap:'과정별 산출물 매트릭스 — 주차 × 교안·SB·영상·자막'},
+      {src:'assets/img/solutions/cdms-03-schedule.webp', cap:'일정표 — 과정별 산출물 마감을 한 달력에'},
+      {src:'assets/img/solutions/cdms-04-review.webp', cap:'검수 현황 — AI 검수 → 발주처 검토 → 최종 승인'}]},
+    {g:'SOLUTION', n:'LMS', k:'위탁교육 플랫폼', h:'LMS', p:'기관별로 독립 운영하는 xAPI 기반 위탁교육 플랫폼입니다.', tags:['멀티테넌트','xAPI','자활연수원 적용'], c:'var(--mint)', v:'lms', d:'lms', dur:14000,
+     url:'자활연수원 온라인 배움터', shots:[
+      {src:'assets/img/solutions/lms-01-home.webp', cap:'기관 전용 첫 화면 — 운영 중인 과정과 기수를 한눈에'},
+      {src:'assets/img/solutions/lms-02-classroom.webp', cap:'학습자 강의실 — 6개 스테이지와 센터 대항전'},
+      {src:'assets/img/solutions/lms-03-check.webp', cap:'출발 전 체크 — 응답에 따라 맞춤 스테이지 추천'},
+      {src:'assets/img/solutions/lms-04-qna.webp', cap:'Q&A — 학습 도우미와 담당자 1:1 질문'}]},
     {g:'SOLUTION', n:'화이트보드', k:'협력학습 도구', h:'화이트보드', p:'교사와 학습자가 한 화면에서 함께 쓰고 그리며 생각을 나눕니다.', tags:['실시간 협업','모둠 활동','NE능률 납품'], c:'var(--peach)', v:'board', d:'board'},
     {g:'INTERACTIVE', n:'비디오 퀴즈', k:'인터랙티브', h:'비디오 퀴즈', p:'영상 핵심 지점마다 5가지 유형의 퀴즈를 배치하는 참여형 인터랙션입니다.', tags:['객관식','OX','단답형','순서 정렬','매칭'], c:'var(--lime)', v:'quiz', x:'video-quiz'},
     {g:'INTERACTIVE', n:'의사결정 시나리오', k:'인터랙티브', h:'의사결정 시나리오', p:'선택에 따라 장면과 결과가 달라지는 멀티 엔딩 브랜칭 콘텐츠입니다.', tags:['분기형 전개','멀티 엔딩'], c:'var(--lav)', v:'branch', x:'branching'},
@@ -88,11 +98,29 @@ print(total([3, 5, 7]))</pre>
     prog.insertAdjacentHTML('beforeend', `<button aria-label="${s.n} 보기" data-i="${i}"><i></i></button>`);
   });
   prog.insertAdjacentHTML('beforeend', `<button class="pause" id="pause" aria-label="자동 넘김 멈춤">❚❚</button>`);
-  const DUR = 6000; let cur = 0, t0 = 0, playing = !reduce, raf;
+  const DUR = 6000; let cur = 0, t0 = 0, playing = !reduce, raf, shotTimer;
+  const dur = () => S[cur].dur || DUR;
+  /* 실제 운영 화면 캡처 슬라이드 (assets/img/solutions/) */
+  function shotsHTML(s){
+    return `<figure class="shots" aria-roledescription="carousel" aria-label="${s.h} 실제 화면">
+      <div class="bar-t"><i></i><i></i><i></i><span>${s.url}</span><em>실제 화면</em></div>
+      <div class="sh-view"${s.ratio ? ` style="aspect-ratio:${s.ratio}"` : ''}>${s.shots.map((x,i)=>`<img src="${x.src}" alt="${x.cap}" class="${i?'':'on'}" loading="lazy" draggable="false">`).join('')}</div>
+      <figcaption><span class="sh-cap">${s.shots[0].cap}</span><span class="sh-dots">${s.shots.map((x,i)=>`<button type="button" aria-label="${i+1}번째 화면" class="${i?'':'on'}" data-sh="${i}"></button>`).join('')}</span></figcaption></figure>`;
+  }
+  function startShots(s){
+    const fig = stage.querySelector('.shots'); let k = 0;
+    const go = n => { k = n; fig.querySelectorAll('.sh-view img').forEach((im,i)=>im.classList.toggle('on', i===k));
+      fig.querySelectorAll('.sh-dots button').forEach((b,i)=>b.classList.toggle('on', i===k));
+      fig.querySelector('.sh-cap').textContent = s.shots[k].cap; };
+    fig.addEventListener('click', e => { const b = e.target.closest('[data-sh]'); if (b) { e.stopPropagation(); go(+b.dataset.sh); } });
+    shotTimer = setInterval(() => { if (playing) go((k + 1) % s.shots.length); }, (s.dur || DUR) / s.shots.length);
+  }
   function show(i) {
     cur = i; t0 = performance.now(); const s = S[i];
     stage.style.setProperty('--panel', s.c);
-    stage.innerHTML = `<div class="fade" style="width:100%;display:grid;place-items:center">${V[s.v]}</div>`;
+    clearInterval(shotTimer);
+    stage.innerHTML = `<div class="fade" style="width:100%;display:grid;place-items:center">${s.shots ? shotsHTML(s) : V[s.v]}</div>`;
+    if (s.shots) startShots(s);
     detail.innerHTML = `<div class="fade" style="display:grid;gap:12px"><span class="kind">${s.k}</span><h3>${s.h}</h3><p>${s.p}</p><ul>${s.tags.map(x=>`<li>${x}</li>`).join('')}</ul>${s.x ? `<button class="btn primary try" type="button" data-ix="${s.x}">직접 체험하기<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>` : ''}${s.d ? `<button class="btn primary try" type="button" data-demo="${s.d}">데모 체험하기<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>` : ''}</div>`;
     stage.classList.toggle('can-try', !!s.x); stage.dataset.ix = s.x || '';
     tabs.querySelectorAll('.tab').forEach(t => { const on = +t.dataset.i === i; t.classList.toggle('on', on); t.setAttribute('aria-selected', on); });
@@ -100,7 +128,7 @@ print(total([3, 5, 7]))</pre>
   }
   function tick(now) {
     if (playing) {
-      const r = Math.min(1, (now - t0) / DUR);
+      const r = Math.min(1, (now - t0) / dur());
       const bar = prog.querySelector(`button[data-i="${cur}"] i`); if (bar) bar.style.width = (r*100) + '%';
       if (r >= 1) show((cur + 1) % S.length);
     }
@@ -109,7 +137,7 @@ print(total([3, 5, 7]))</pre>
   tabs.addEventListener('click', e => { const b = e.target.closest('.tab'); if (b) show(+b.dataset.i); });
   prog.addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (b) show(+b.dataset.i); });
   const pauseBtn = document.getElementById('pause');
-  function setPlay(p){ playing = p; pauseBtn.textContent = p ? '❚❚' : '▶'; pauseBtn.setAttribute('aria-label', p ? '자동 넘김 멈춤' : '자동 넘김 시작'); t0 = performance.now() - (parseFloat(prog.querySelector(`button[data-i="${cur}"] i`).style.width)||0)/100*DUR; }
+  function setPlay(p){ playing = p; pauseBtn.textContent = p ? '❚❚' : '▶'; pauseBtn.setAttribute('aria-label', p ? '자동 넘김 멈춤' : '자동 넘김 시작'); t0 = performance.now() - (parseFloat(prog.querySelector(`button[data-i="${cur}"] i`).style.width)||0)/100*dur(); }
   pauseBtn.addEventListener('click', () => setPlay(!playing));
   show(0); setPlay(playing); raf = requestAnimationFrame(tick);
   stage.addEventListener('click', () => { if (stage.dataset.ix) openIx(stage.dataset.ix); });
