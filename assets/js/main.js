@@ -116,6 +116,8 @@ print(total([3, 5, 7]))</pre>
   }
   function startShots(s){
     const fig = stage.querySelector('.shots'); let k = 0;
+    /* 숨은 슬라이드는 lazy 로드가 걸리지 않아 넘어갈 때 빈 화면이 보인다 — 탭을 연 순간 전부 불러온다 */
+    fig.querySelectorAll('.sh-view img').forEach(im => { im.loading = 'eager'; if (!im.complete) im.src = im.src; });
     const go = n => { k = n; fig.querySelectorAll('.sh-view img').forEach((im,i)=>im.classList.toggle('on', i===k));
       fig.querySelectorAll('.sh-dots button').forEach((b,i)=>b.classList.toggle('on', i===k));
       fig.querySelector('.sh-cap').textContent = s.shots[k].cap; };
