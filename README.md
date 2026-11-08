@@ -8,6 +8,8 @@
 ```
 web/
 ├─ index.html            메인 페이지
+├─ terms.html            이용약관
+├─ privacy.html          개인정보 처리방침
 ├─ assets/css/style.css  스타일 (색상·폰트 토큰은 파일 맨 위 :root)
 ├─ assets/js/config.js   사이트 설정 (견적 챗봇 주소)
 ├─ assets/js/main.js     사업영역 팝업, 솔루션 탭 자동 넘김, 히어로 배경, 커서 등
@@ -19,6 +21,7 @@ web/
 ├─ assets/img/thumbs/    제작 포맷 사례 대표 장면(영상 대신 이미지로만 노출)
 ├─ assets/docs/          회사소개서 PDF (첫 화면 「회사소개서 받기」)
 ├─ DOMAIN.md             contentlabs.co.kr 도메인 연결 안내
+├─ LAUNCH-CHECKLIST.md   공개 전 최종 점검 목록 (공개 전 반드시 확인)
 ├─ assets/img/brand/     콘텐츠랩스 로고·심볼(SVG), 파비콘
 └─ README.md
 ```
@@ -142,7 +145,18 @@ git push -u origin main
 
 ## 솔루션 실제 화면 (CDMS · LMS)
 - `assets/img/solutions/` — 솔루션 탭에서 브라우저 창 모양으로 3.5초마다 넘어가는 실제 화면 캡처
-  - `lms-01~04` : 자활연수원 LMS 검수용 로컬 화면 (테스트 계정 데이터)
+  - `lms-01~06` : 위탁교육 LMS 검수용 로컬 화면 (테스트 계정) — 고객사명·과정명·센터명·연락처는 모자이크, 05·06은 인터랙티브 영상 활동
   - `cdms-01~04` : AI CDMS(counseleb.com) 개발사 담당자 포털 — 프로젝트·과정명, 발주처, 사람 이름은 모자이크 처리
 - 캡처와 설명 문구는 `assets/js/main.js`의 솔루션 목록(`S`)에서 `shots:[{src, cap}]`로 관리합니다. 화면 비율이 다르면 `ratio`를 지정합니다.
-- 공개 전 발주처(자활연수원) 화면 노출 동의를 확인하세요.
+- 고객사명은 사이트 문구와 화면 모두에서 노출하지 않습니다.
+
+## 약관 · 개인정보 처리방침 (2026-11-07 추가)
+
+- `terms.html`, `privacy.html` — 푸터 링크에서 연결됨. 스타일은 `style.css` 맨 아래 `.legal-*` 블록
+- 기존 contentlabs.co.kr에는 두 문서가 게시되어 있지 않아(사이트맵 확인), 현재 사이트가 실제로 수집하는 항목을 기준으로 새로 작성함
+- 시행일 2026년 11월 7일. 내용을 고치면 두 파일의 시행일도 같이 고칠 것
+
+### 공개 전 확인할 것
+
+점검 항목은 `LAUNCH-CHECKLIST.md` **A. 약관 · 개인정보**로 옮겨 관리합니다.
+2026-11-07 기준 내용은 운영과 일치함을 확인했고, 운영 방식이 바뀔 때 같은 문서에서 다시 점검합니다.

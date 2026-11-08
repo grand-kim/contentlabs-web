@@ -35,13 +35,20 @@
       {src:'assets/img/solutions/cdms-02-matrix.webp', cap:'과정별 산출물 매트릭스 — 주차 × 교안·SB·영상·자막'},
       {src:'assets/img/solutions/cdms-03-schedule.webp', cap:'일정표 — 과정별 산출물 마감을 한 달력에'},
       {src:'assets/img/solutions/cdms-04-review.webp', cap:'검수 현황 — AI 검수 → 발주처 검토 → 최종 승인'}]},
-    {g:'SOLUTION', n:'LMS', k:'위탁교육 플랫폼', h:'LMS', p:'기관별로 독립 운영하는 xAPI 기반 위탁교육 플랫폼입니다.', tags:['멀티테넌트','xAPI','자활연수원 적용'], c:'var(--mint)', v:'lms', d:'lms', dur:14000,
-     url:'자활연수원 온라인 배움터', shots:[
+    {g:'SOLUTION', n:'LMS', k:'위탁교육 플랫폼', h:'LMS', p:'기관별로 독립 운영하는 xAPI 기반 위탁교육 플랫폼입니다.', tags:['멀티테넌트','xAPI','인터랙티브 콘텐츠'], c:'var(--mint)', v:'lms', d:'lms', dur:18000,
+     url:'기관 전용 LMS · 위탁교육', shots:[
       {src:'assets/img/solutions/lms-01-home.webp', cap:'기관 전용 첫 화면 — 운영 중인 과정과 기수를 한눈에'},
       {src:'assets/img/solutions/lms-02-classroom.webp', cap:'학습자 강의실 — 6개 스테이지와 센터 대항전'},
+      {src:'assets/img/solutions/lms-05-card.webp', cap:'인터랙티브 영상 — 멈춘 지점에서 경험 카드 고르기'},
+      {src:'assets/img/solutions/lms-06-match.webp', cap:'인터랙티브 영상 — 채용공고에 맞는 경험 골라 보기'},
       {src:'assets/img/solutions/lms-03-check.webp', cap:'출발 전 체크 — 응답에 따라 맞춤 스테이지 추천'},
       {src:'assets/img/solutions/lms-04-qna.webp', cap:'Q&A — 학습 도우미와 담당자 1:1 질문'}]},
-    {g:'SOLUTION', n:'화이트보드', k:'협력학습 도구', h:'화이트보드', p:'교사와 학습자가 한 화면에서 함께 쓰고 그리며 생각을 나눕니다.', tags:['실시간 협업','모둠 활동','NE능률 납품'], c:'var(--peach)', v:'board', d:'board'},
+    {g:'SOLUTION', n:'화이트보드', k:'협력학습 도구', h:'화이트보드', p:'교사와 학습자가 한 화면에서 함께 쓰고 그리며 생각을 나눕니다.', tags:['실시간 협업','모둠 활동','NE능률 납품'], c:'var(--peach)', v:'board', d:'board', dur:12000,
+     url:'협력학습 화이트보드 · 수업 보드', ratio:'1457/705', shots:[
+      {src:'assets/img/solutions/board-01-class.webp', cap:'수업 자료 위 판서 — 학생 필기 제어·같은 화면 보기를 교사가 조절'},
+      {src:'assets/img/solutions/board-02-pages.webp', cap:'페이지 목록과 도구 모음 — 활동 단계별로 보드를 넘기며 수업'},
+      {src:'assets/img/solutions/board-03-link.webp', cap:'링크 카드 — 참고 사이트를 보드 위에 바로 붙이기'},
+      {src:'assets/img/solutions/board-04-image.webp', cap:'이미지와 설명 배치 — 자료를 올리고 옆에 바로 설명 적기'}]},
     {g:'INTERACTIVE', n:'비디오 퀴즈', k:'인터랙티브', h:'비디오 퀴즈', p:'영상 핵심 지점마다 5가지 유형의 퀴즈를 배치하는 참여형 인터랙션입니다.', tags:['객관식','OX','단답형','순서 정렬','매칭'], c:'var(--lime)', v:'quiz', x:'video-quiz'},
     {g:'INTERACTIVE', n:'의사결정 시나리오', k:'인터랙티브', h:'의사결정 시나리오', p:'선택에 따라 장면과 결과가 달라지는 멀티 엔딩 브랜칭 콘텐츠입니다.', tags:['분기형 전개','멀티 엔딩'], c:'var(--lav)', v:'branch', x:'branching'},
     {g:'INTERACTIVE', n:'프로그래밍 교육', k:'인터랙티브', h:'프로그래밍 교육', p:'영상 시청 중 코드 실행과 AI 코드 리뷰가 연결되는 실습 환경입니다.', tags:['코드 실행','AI 코드 리뷰'], c:'var(--mint)', v:'code', x:'programming'},
