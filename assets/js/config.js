@@ -1,9 +1,12 @@
 /* 사이트 설정
- * chatbotUrl: 견적 챗봇 배포 주소 (예: 'https://contentlabs-quote.streamlit.app')
- *             비워 두면 견적 패널에 '연결 준비 중' 안내와 연락처가 표시됩니다.
+ * quoteApi  : 견적 상담 서버(Cloudflare Workers) 주소. 채우면 홈페이지 자체 대화창으로 견적 상담을 합니다.
+ *             (예: 'https://contentlabs-quote.○○○.workers.dev' — 견적 챗봇 폴더 worker/README.md 참고)
+ * chatbotUrl: 예전 Streamlit 챗봇 주소. quoteApi 가 비어 있을 때만 쓰입니다(옮기는 동안의 예비).
+ *             둘 다 비워 두면 견적 패널에 '연결 준비 중' 안내와 연락처가 표시됩니다.
  * newsletter: 아래 설명 참고
  * (제작 포맷 사례는 영상 대신 assets/img/thumbs/ 의 대표 장면 이미지로 보여 줍니다) */
 window.CL_CONFIG = {
+  quoteApi: 'https://contentlabs-quote.contentlabs-quote.workers.dev',
   chatbotUrl: 'https://elearning-quote-bot-contentlabs.streamlit.app',
 
   /* 문의 메일 (데모 신청 메일 받는 주소) */

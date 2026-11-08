@@ -11,9 +11,9 @@ web/
 ├─ terms.html            이용약관
 ├─ privacy.html          개인정보 처리방침
 ├─ assets/css/style.css  스타일 (색상·폰트 토큰은 파일 맨 위 :root)
-├─ assets/js/config.js   사이트 설정 (견적 챗봇 주소)
+├─ assets/js/config.js   사이트 설정 (견적 상담 서버 주소 quoteApi)
 ├─ assets/js/main.js     사업영역 팝업, 솔루션 탭 자동 넘김, 히어로 배경, 커서 등
-├─ assets/js/quote-panel.js  견적 문의 패널 (챗봇 iframe)
+├─ assets/js/quote-panel.js  견적 문의 대화창 (홈페이지가 직접 그림, 견적 서버와 통신)
 ├─ assets/js/newsletter.js   뉴스레터 구독 폼
 ├─ assets/js/formats-data.js 제작 포맷 8종 상세 내용 (카운셀럽 인트로에서 가져옴)
 ├─ interactive/          인터랙티브 기능 5종 (카운셀럽 인트로 소스를 옮겨 사이트 배색으로 변경)
@@ -44,7 +44,7 @@ web/
 
 - 도메인 연결: `DOMAIN.md` 참고 (cPanel DNS 변경은 직접 로그인해서 진행)
 - 솔루션 데모: `config.js`의 `demo`에 CDMS·LMS·화이트보드 체험 주소·체험 계정을 넣으면 「데모 열기」로 바뀜 (지금은 「데모 신청」 메일)
-- 견적 알림 메일: 메일플러그 SMTP 계정을 받으면 챗봇 Secrets에 설정
+- 견적 알림 메일: 메일플러그 SMTP 계정을 받으면 견적 상담 서버(Cloudflare) Secrets에 설정
 - 인터랙티브 「VIEW DEMO」 영상(video-quiz-01 등)은 원본에도 파일이 없어 '준비 중'으로 표시됨
 - 솔루션 화면: 그림 목업 → 실제 캡처로 교체 가능
 
@@ -79,11 +79,13 @@ web/
 ## 견적 상담 패널
 
 - `data-quote` 속성이 붙은 요소를 누르면 오른쪽에서 견적 패널이 열립니다. 버튼 이름은 모두 「견적 문의」로 통일했습니다(첫 화면, 문의 섹션, 포맷 팝업, 오른쪽 아래). 다른 버튼에도 `data-quote`만 붙이면 됩니다.
-- 패널은 `assets/js/config.js`의 `chatbotUrl` 주소에 `?embed=true&widget=1`을 붙여 iframe으로 불러옵니다. 처음 열 때만 불러오고, 불러오는 동안 「준비하고 있어요」 안내가 보입니다.
-- 챗봇이 잠들어 있으면 영어 「Zzzz」 화면이 먼저 나옵니다(Streamlit 무료 환경). 패널 아래 안내 문구로 버튼을 누르도록 알려 줍니다.
-- `chatbotUrl`이 비어 있으면 「준비하고 있습니다」 안내와 이메일·전화가 표시됩니다.
+- (2026-11-08) 대화창을 Streamlit iframe 대신 **홈페이지가 직접 그립니다**(`quote-panel.js`, `style.css`의 `.qc-*`). 견적 계산·AI 상담·접수는 콘텐츠랩스 견적 상담 서버(Cloudflare Workers)가 맡고, 서버 코드는 챗봇 폴더의 `worker/`에 있습니다. 잠들지 않아 바로 열립니다.
+- `assets/js/config.js`의 `quoteApi`에 견적 서버 주소를 넣으면 자체 대화창이 켜집니다. 비어 있으면 예전처럼 `chatbotUrl`(Streamlit)을 iframe으로 불러오고, 둘 다 비면 「준비하고 있습니다」 안내와 이메일·전화가 표시됩니다.
+- 대화창은 고객에게 금액을 보여 주지 않습니다. 상담을 마치면 「견적 요청」 칸에 이메일을 받고, 담당 PM 검토 후 견적 링크가 메일로 갑니다(PM 검토 화면·견적 링크는 아직 Streamlit 앱).
+- 상담 내용은 그 브라우저 탭(sessionStorage)에만 보관되어 새로고침해도 이어지고, 탭을 닫으면 사라집니다. 「↺ 처음부터」로 새로 시작합니다.
+- 제작 사례 이미지는 이 사이트의 `assets/img/thumbs/`를 그대로 씁니다.
 - 주소 끝에 `#quote`를 붙여 열면(예: 홍보 메일 링크) 패널이 바로 열립니다.
-- 챗봇 쪽 위젯 모드 설명: `D:\01_프로젝트\17_이러닝콘텐츠 제작견적 챗봇\README.md`
+- 견적 서버 배포·설정: `D:\01_프로젝트\17_이러닝콘텐츠 제작견적 챗봇\worker\README.md`
 
 ## GitHub 올리기
 
@@ -100,7 +102,7 @@ git push -u origin main
 
 - 공개 범위: 이 폴더에는 비밀 정보가 없어 공개(Public)도 가능합니다. 시안 단계라 외부에 보이지 않게 하려면 비공개로 두세요.
 - 실제 서비스 반영(contentlabs.co.kr): `DOMAIN.md` 참고
-- 챗봇은 별도 저장소(`contentlabs-quote-bot`, 비공개)입니다. 두 저장소는 `assets/js/config.js`의 `chatbotUrl` 한 줄로만 연결됩니다.
+- 견적 챗봇·견적 서버는 별도 저장소(`contentlabs-quote-bot`, 비공개)입니다. 홈페이지와는 `assets/js/config.js`의 `quoteApi`(예비: `chatbotUrl`) 한 줄로만 연결됩니다.
 
 ## 회사 정보 기준 (2026-10-20)
 
@@ -124,8 +126,8 @@ git push -u origin main
 
 ## 포맷별 견적 문의
 
-제작 포맷 팝업의 [견적 문의]는 `data-format="<포맷 id>"`를 달고 있어, 견적 패널이 챗봇을 `&format=<id>`로 엽니다.
-챗봇은 그 포맷을 견적 유형으로 정해 두고 차시·분량부터 묻습니다(대응표는 챗봇 `formats.py`).
+제작 포맷 팝업의 [견적 문의]는 `data-format="<포맷 id>"`를 달고 있어, 대화창이 그 포맷으로 상담을 시작합니다.
+유형을 정해 두고 차시·분량부터 묻습니다(대응표는 견적 서버 `worker/src/formats.js`, 파이썬 챗봇 `formats.py`).
 다른 포맷으로 다시 문의하면 그 포맷으로 새 상담이 열리고, 오른쪽 아래 일반 「견적 문의」는 진행 중인 상담을 그대로 보여 줍니다.
 
 ## 2026-10-22 변경
@@ -140,7 +142,7 @@ git push -u origin main
 - 제작 포맷 사례: 영상 재생 → 대표 장면 이미지만 노출 (유튜브 연결 준비분 제거)
 - 「회사소개서 받기」 → 회사소개서 PDF 내려받기
 - 솔루션 탭(CDMS·LMS·화이트보드)에 「데모 체험하기」 추가 (`config.js`의 `demo`)
-- 견적 패널: 사이트가 다크 모드면 챗봇도 다크 모드로 표시
+- 견적 패널: 사이트가 다크 모드면 대화창도 다크 모드로 표시
 - 도메인 연결 안내 `DOMAIN.md` 추가
 
 ## 솔루션 실제 화면 (CDMS · LMS)
