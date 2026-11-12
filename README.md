@@ -18,7 +18,8 @@ web/
 ├─ assets/js/formats-data.js 제작 포맷 8종 상세 내용 (카운셀럽 인트로에서 가져옴)
 ├─ interactive/          인터랙티브 기능 5종 (카운셀럽 인트로 소스를 옮겨 사이트 배색으로 변경)
 ├─ assets/img/clients/   레퍼런스 로고 33종 (아래 출처 참고)
-├─ assets/img/thumbs/    제작 포맷 사례 대표 장면(영상 대신 이미지로만 노출)
+├─ assets/img/thumbs/    포맷 팝업 기본 장면(cases 가 없는 포맷의 롤링 소스)
+├─ assets/img/cases/     포맷별 실제 제작 사례 캡처 (formats-data.js 의 cases[])
 ├─ assets/docs/          회사소개서 PDF (첫 화면 「회사소개서 받기」)
 ├─ DOMAIN.md             contentlabs.co.kr 도메인 연결 안내
 ├─ LAUNCH-CHECKLIST.md   공개 전 최종 점검 목록 (공개 전 반드시 확인)
@@ -60,7 +61,7 @@ web/
 
 ## 제작 포맷 사례 (영상 → 썸네일)
 
-- 포맷 팝업은 영상을 재생하지 않고 대표 장면 이미지만 보여 줌 (`assets/img/thumbs/<영상 이름>.jpg`)
+- 포맷 팝업은 설명 섹션 없이 이미지 롤링 한 개만 보여 줌. `formats-data.js` 의 `cases[]`(= `assets/img/cases/` 파일 이름)가 있으면 그걸 쓰고, 없으면 각 섹션 영상의 대표 장면(`assets/img/thumbs/<영상 이름>.jpg`)을 돌림. 파일이 없는 장면은 자동으로 빠짐
 - 원본 영상(`D:\01_프로젝트\11_카운셀럽 홈페이지\intro\videos`)의 30% 지점에서 추출. 다른 장면을 쓰려면 같은 이름의 jpg(1280×720)로 바꾸면 됨
 - onboarding-02는 원본 영상이 없어 '준비 중'으로 표시
 - 견적 챗봇의 샘플도 같은 이미지를 씀(챗봇 `formats.py`의 THUMB_BASE)
