@@ -155,12 +155,31 @@ print(total([3, 5, 7]))</pre>
   /* 포트폴리오는 영상을 재생하지 않고 대표 장면(썸네일)만 보여 줍니다.
    * 썸네일: assets/img/thumbs/<영상 이름>.jpg (원본 영상 30% 지점에서 추출). 파일이 없으면 '준비 중' 표시 */
   const thumb = v => 'assets/img/thumbs/' + String(v).replace(/\.mp4$/i, '') + '.jpg';
+  /* 포맷별 실제 제작 사례 롤링: formats-data.js 의 cases[] (assets/img/cases/ 안의 파일 이름) */
+  const CASE_DIR = 'assets/img/cases/';
+  let caseTimer;
+  function rollHTML(f){
+    const cs = f.cases || []; if (!cs.length) return '';
+    return `<figure class="fd-roll" aria-roledescription="carousel" aria-label="${f.name} 실제 제작 사례">
+      <div class="fr-view">${cs.map((c, i) => `<img src="${CASE_DIR}${c}" alt="${f.name} 제작 사례 ${i + 1}" class="${i ? '' : 'on'}" draggable="false">`).join('')}</div>
+      <figcaption><span class="fr-lab">실제 제작 사례</span>${f.caseNote ? `<span class="fr-note">${f.caseNote}</span>` : ''}<span class="fr-dots">${cs.map((c, i) => `<button type="button" aria-label="${i + 1}번째 사례" class="${i ? '' : 'on'}" data-case="${i}"></button>`).join('')}</span></figcaption></figure>`;
+  }
+  function startRoll(n){
+    clearInterval(caseTimer);
+    const fig = fmtBody.querySelector('.fd-roll'); if (!fig || n < 2) return;
+    let k = 0;
+    const go = i => { k = i;
+      fig.querySelectorAll('.fr-view img').forEach((im, j) => im.classList.toggle('on', j === k));
+      fig.querySelectorAll('[data-case]').forEach((b, j) => b.classList.toggle('on', j === k)); };
+    fig.addEventListener('click', e => { const b = e.target.closest('[data-case]'); if (b) { clearInterval(caseTimer); go(+b.dataset.case); } });
+    if (!reduce) caseTimer = setInterval(() => go((k + 1) % n), 4200);
+  }
   const F = window.CL_FORMATS || [];
   const fmtDlg = document.getElementById('fmtDlg'), fmtBody = document.getElementById('fmtBody');
   document.querySelectorAll('[data-card]').forEach(p => { const f = F.find(x => x.id === p.dataset.card); if (f) p.textContent = f.card; });
   function openFmt(id){
     const f = F.find(x => x.id === id); if (!f) return;
-    fmtBody.innerHTML = `<header class="fd-head"><p class="eyebrow">${f.eyebrow}</p><h3 id="fmtT">${f.title}</h3><p>${f.lead}</p></header>` +
+    fmtBody.innerHTML = `<header class="fd-head"><p class="eyebrow">${f.eyebrow}</p><h3 id="fmtT">${f.title}</h3><p>${f.lead}</p></header>` + rollHTML(f) +
       f.sections.map((x, i) => `<section class="fd-sec${i % 2 ? ' flip' : ''}">
         <div class="fd-info"><span class="fd-tag">${x.tag}</span><h4>${x.h}</h4><p>${x.p}</p><ul>${x.li.map(l => `<li>${l}</li>`).join('')}</ul></div>
         <figure class="fd-vid"><img src="${thumb(x.video)}" alt="${x.h.replace(/<[^>]+>/g,' ')} 제작 사례 화면" loading="lazy" draggable="false"><figcaption>제작 사례</figcaption></figure>
@@ -168,7 +187,9 @@ print(total([3, 5, 7]))</pre>
       `<div class="fd-foot"><span>「${f.name}」 포맷으로 제작하고 싶으신가요? 유형이 정해진 상태로 견적 문의가 이어집니다.</span><button class="btn primary" type="button" data-quote data-format="${f.id}">견적 문의</button></div>`;
     fmtBody.querySelectorAll('.fd-vid img').forEach(im => im.addEventListener('error', () => im.parentElement.classList.add('fail')));
     fmtBody.scrollTop = 0; fmtDlg.showModal();
+    startRoll((f.cases || []).length);
   }
+  fmtDlg.addEventListener('close', () => clearInterval(caseTimer));
   document.querySelectorAll('[data-fmt]').forEach(b => b.addEventListener('click', () => openFmt(b.dataset.fmt)));
 
   /* ---------- 솔루션 데모 체험 (config.js 의 demo) ----------

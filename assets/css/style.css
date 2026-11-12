@@ -348,6 +348,18 @@ dialog.fmt-dlg{width:min(1040px,calc(100% - 32px));max-height:calc(100% - 40px);
 .fd-head{display:grid;gap:14px;padding-right:44px}
 .fd-head h3{font-size:clamp(26px,3.4vw,40px);font-weight:700;letter-spacing:-.03em}
 .fd-head > p:last-child{color:var(--muted);max-width:44em}
+/* 포맷 팝업 — 실제 제작 사례 롤링 */
+.fd-roll{margin:0 auto;display:grid;gap:10px;width:100%;max-width:720px}
+.fr-view{position:relative;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#15171A;border:1px solid var(--ink)}
+.fr-view img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .55s ease;user-select:none;-webkit-user-drag:none}
+.fr-view img.on{opacity:1}
+.fd-roll figcaption{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.fr-lab{font:600 11px/1.4 var(--f-mono);letter-spacing:.06em;background:var(--ink);color:var(--bg);padding:4px 10px;border-radius:999px;flex-shrink:0}
+.fr-note{min-width:0}
+.fr-dots{margin-left:auto;display:flex;gap:6px;flex-shrink:0}
+.fr-dots button{width:8px;height:8px;padding:0;border:0;border-radius:999px;background:var(--line);cursor:pointer;transition:width .2s ease,background .2s ease}
+.fr-dots button.on{width:18px;background:var(--ink)}
+@media (max-width:760px){.fr-dots{margin-left:0}}
 .fd-sec{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:32px;align-items:center;padding-top:36px;border-top:1px solid var(--line)}
 .fd-sec.flip .fd-info{order:2}
 .fd-info{display:grid;gap:12px;align-content:start}

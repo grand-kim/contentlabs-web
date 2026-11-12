@@ -5,6 +5,8 @@ window.CL_FORMATS = [
   "id": "solo",
   "name": "1인 강의형",
   "eyebrow": "FORMAT 01 · SOLO LECTURE",
+  "caseNote": "자활 「미생(未生) — 숫자 뒤에 가려진 사람」 · 아나운서 진행 + 크로마키 합성",
+  "cases": ["solo-1.webp", "solo-2.webp", "solo-3.webp", "solo-4.webp", "solo-5.webp"],
   "title": "강사가 직접 전달하는<br>1인 강의형",
   "lead": "강사 한 명이 카메라를 보고 설명하는 가장 기본적이고 범용적인 포맷입니다. 직무·교양 전반에 적합합니다.",
   "card": "강사 한 명이 카메라를 보고 직접 설명하는 가장 기본적이고 범용적인 포맷",
