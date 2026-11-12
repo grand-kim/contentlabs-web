@@ -167,7 +167,7 @@ print(total([3, 5, 7]))</pre>
     const cs = caseSrcs(f); if (!cs.length) return '';
     return `<figure class="fd-roll" aria-roledescription="carousel" aria-label="${f.name} 제작 사례">
       <div class="fr-view">${cs.map((c, i) => `<img src="${c}" alt="${f.name} 제작 사례 ${i + 1}" class="${i ? '' : 'on'}" draggable="false">`).join('')}</div>
-      <figcaption><span class="fr-dots">${cs.map((c, i) => `<button type="button" aria-label="${i + 1}번째 장면" class="${i ? '' : 'on'}" data-case="${i}"></button>`).join('')}</span></figcaption></figure>`;
+      ${cs.length > 1 ? `<figcaption><span class="fr-dots">${cs.map((c, i) => `<button type="button" aria-label="${i + 1}번째 장면" class="${i ? '' : 'on'}" data-case="${i}"></button>`).join('')}</span></figcaption>` : ''}</figure>`;
   }
   /* 파일이 없는 장면은 통째로 빼고, 하나도 남지 않으면 '준비 중'을 보여 준다 */
   function dropMissing(im){
@@ -177,7 +177,8 @@ print(total([3, 5, 7]))</pre>
     im.remove(); if (dot) dot.remove();
     const left = fig.querySelectorAll('.fr-view img');
     fig.querySelectorAll('[data-case]').forEach((b, j) => b.dataset.case = j);
-    if (!left.length) { fig.querySelector('.fr-view').classList.add('fail'); fig.querySelector('.fr-dots').remove(); }
+    if (!left.length) fig.querySelector('.fr-view').classList.add('fail');
+    if (left.length < 2) fig.querySelector('figcaption')?.remove();
     else if (![...left].some(x => x.classList.contains('on'))) left[0].classList.add('on');
     if (left.length < 2) clearInterval(caseTimer);
   }
@@ -203,7 +204,6 @@ print(total([3, 5, 7]))</pre>
   }
   document.querySelectorAll('[data-fmt]').forEach(b => b.addEventListener('click', () => openFmt(b.dataset.fmt)));
   fmtDlg.addEventListener('close', () => clearInterval(caseTimer));
-  document.querySelectorAll('[data-fmt]').forEach(b => b.addEventListener('click', () => openFmt(b.dataset.fmt)));
 
   /* ---------- 솔루션 데모 체험 (config.js 의 demo) ----------
    * url 이 있으면 체험 계정 안내 + 「데모 열기」, 비어 있으면 「데모 신청」(메일) 안내 */
