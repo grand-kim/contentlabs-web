@@ -194,6 +194,9 @@ print(total([3, 5, 7]))</pre>
     fig.addEventListener('click', e => { const b = e.target.closest('[data-case]'); if (b) { clearInterval(caseTimer); go(+b.dataset.case); } });
     if (!reduce) caseTimer = setInterval(() => { if (imgs().length > 1) go(k + 1); }, 4200);
   }
+  const F = window.CL_FORMATS || [];
+  const fmtDlg = document.getElementById('fmtDlg'), fmtBody = document.getElementById('fmtBody');
+  document.querySelectorAll('[data-card]').forEach(p => { const f = F.find(x => x.id === p.dataset.card); if (f) p.textContent = f.card; });
   function openFmt(id){
     const f = F.find(x => x.id === id); if (!f) return;
     fmtBody.innerHTML = `<header class="fd-head"><p class="eyebrow">${f.eyebrow}</p><h3 id="fmtT">${f.title}</h3><p>${f.lead}</p></header>` + rollHTML(f) +
