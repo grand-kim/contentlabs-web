@@ -12,10 +12,15 @@
   <meta property="og:locale" content="ko_KR">
   <meta property="og:url" content="https://contentlabs.co.kr/">
   <meta property="og:site_name" content="콘텐츠랩스">
+  <meta property="og:image" content="https://contentlabs.co.kr/assets/img/brand/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
-  <link rel="stylesheet" href="assets/css/style.css?v=20261113cb">
+  <link rel="stylesheet" href="assets/css/style.css?v=20261113d">
+  <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/img/brand/favicon-32.png">
   <link rel="icon" type="image/webp" href="assets/img/brand/favicon.webp">
   <link rel="apple-touch-icon" href="assets/img/brand/apple-touch-icon.png">
@@ -33,7 +38,7 @@
       <a href="#formats">제작 포맷</a>
       <a href="#solutions">솔루션</a>
       <a href="#contact">문의</a>
-      <a href="#newsletter">뉴스레터</a>
+      <a href="#blog">블로그</a>
     </nav>
   </div>
 </header>
@@ -243,26 +248,17 @@
 </main>
 
 <footer>
-  <div class="wrap nl" id="newsletter">
-    <div class="nl-copy">
-      <p class="eyebrow">NEWSLETTER</p>
-      <h2>콘텐츠랩스 레터</h2>
-      <p>교육담당자를 위한 이러닝 제작 소식을 매월 둘째 주 화요일 아침에 보내 드립니다. 제작 사례, 교육 트렌드, 발주 준비 팁을 한 통에 담습니다.</p>
-    </div>
-    <form class="nl-form" id="nlForm" novalidate>
-      <div class="nl-row">
-        <label class="sr" for="nlEmail">이메일</label>
-        <input id="nlEmail" name="email" type="email" required autocomplete="email" placeholder="업무용 이메일">
-        <label class="sr" for="nlOrg">기관(회사)명</label>
-        <input id="nlOrg" name="org" type="text" autocomplete="organization" placeholder="기관(회사)명 (선택)">
-        <button class="btn primary" type="submit">구독하기</button>
+  <div class="wrap blog" id="blog">
+    <div class="blog-copy">
+      <p class="eyebrow">BLOG</p>
+      <h2>콘텐츠랩스 블로그</h2>
+      <p>교육담당자를 위한 이러닝 제작 이야기를 블로그에 올립니다. 제작 사례, 교육 트렌드, 발주 준비 팁을 만나 보세요.</p>
+      <div class="blog-links">
+        <a class="btn ghost" id="blogNaver" href="#" target="_blank" rel="noopener" hidden><span class="bl-mark sm naver" aria-hidden="true">N</span>네이버 블로그</a>
+        <a class="btn ghost" id="blogTistory" href="#" target="_blank" rel="noopener" hidden><span class="bl-mark sm tistory" aria-hidden="true">T</span>티스토리</a>
       </div>
-      <label class="nl-agree"><input type="checkbox" name="agree" required> <span>[필수] 개인정보 수집·이용 및 광고성 정보(뉴스레터) 수신에 동의합니다.</span></label>
-      <details class="nl-terms"><summary>자세히 보기</summary>
-        <p>수집 항목: 이메일, 기관(회사)명(선택) · 목적: 뉴스레터 발송 · 보유 기간: 구독 해지 시까지. 동의하지 않으셔도 되며, 이 경우 뉴스레터를 받을 수 없습니다. 모든 메일 하단에서 언제든 구독을 해지할 수 있습니다.</p>
-      </details>
-      <p class="nl-msg" id="nlMsg" role="status" aria-live="polite"></p>
-    </form>
+    </div>
+    <div class="blog-list" id="blogList" aria-live="polite"></div>
   </div>
   <div class="wrap">
     <a class="logo" href="#hero" aria-label="콘텐츠랩스 홈으로"><svg class="wordmark" aria-hidden="true" focusable="false"><use href="#cl-wordmark"/></svg></a>
@@ -310,11 +306,11 @@
 </aside>
 
 
-<script src="assets/js/config.js?v=20261113cb"></script>
+<script src="assets/js/config.js?v=20261113d"></script>
 <script src="assets/js/formats-data.js?v=20261113c"></script>
 <script src="assets/js/main.js?v=20261113c"></script>
 <script src="assets/js/typo.js?v=20261113c"></script>
 <script src="assets/js/quote-panel.js?v=20261113cb"></script>
-<script src="assets/js/newsletter.js?v=20261113c"></script>
+<script src="assets/js/blog.js?v=20261113d"></script>
 </body>
 </html>
