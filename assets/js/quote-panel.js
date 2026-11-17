@@ -349,8 +349,23 @@
   /* ── 공통 이벤트 ─────────────────────────────── */
   document.addEventListener('click', e => {
     const t = e.target.closest('[data-quote]');
-    if (t) { e.preventDefault(); open(t.dataset.format || ''); }
+    if (t) { e.preventDefault(); trackInquiry(); open(t.dataset.format || ''); }
   });
+
+  /* 네이버 검색광고 전환 — 「견적 문의」를 누른 시점을 전환(4: 신청/예약)으로 보냄.
+     한 페이지에서 여러 번 눌러도 1회만 집계 */
+  let inquirySent = false;
+  function trackInquiry() {
+    if (inquirySent) return;
+    try {
+      if (window.wcs && typeof wcs_do === 'function') {
+        window._nasa = window._nasa || {};
+        window._nasa['cnv'] = wcs.cnv('4', '1');
+        wcs_do(window._nasa);
+        inquirySent = true;
+      }
+    } catch (err) { /* 추적 실패가 견적 창을 막지 않도록 무시 */ }
+  }
   closeBtn.addEventListener('click', close);
   backdrop.addEventListener('click', close);
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !qp.hidden) close(); });
