@@ -165,3 +165,4 @@ details summary{cursor:pointer;color:var(--muted);font-size:14px}
   .g4{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media (min-width:901px){ .back-to-list{display:none!important} }
+.lines td[data-amt]{white-space:nowrap}

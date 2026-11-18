@@ -7,7 +7,7 @@
   var API = String((window.CL_CONFIG || {}).quoteApi || '').replace(/\/$/, '');
   var app = document.getElementById('app');
   var TK = 'cl_admin_token';
-  var S = { token: null, items: [], filter: 'pending', q: '', cur: null, work: null, dirty: false, tab: 'quotes', learn: null };
+  var S = { token: null, items: [], filter: 'pending', q: '', cur: null, work: null, dirty: false, tab: 'quotes', learn: null, role: null, roleLabel: '', canDelete: false, picked: {} };
   var STATUS = { pending: '검토 대기', issued: '발행됨', hold: '보류', revoked: '링크 회수', expired: '기간 만료' };
   var INFO = [['client_name', '수신(기관명)'], ['contact_name', '담당자 성함'], ['email', '이메일'], ['phone', '전화'], ['domain', '기관 유형'],
     ['audience', '교육 대상'], ['course_title', '과정명'], ['format', '제작 포맷'], ['contact', '담당자'], ['deadline', '희망 납기'],
@@ -56,7 +56,7 @@
       (msg ? '<p class="note bad">' + esc(msg) + '</p>' : '') +
       '<label class="field"><span>비밀번호</span><input type="password" name="pw" autocomplete="current-password" required></label>' +
       '<p style="margin-top:12px"><button class="btn primary" style="width:100%">로그인</button></p>' +
-      '<p class="muted small">비밀번호는 견적 서버(Cloudflare)의 ADMIN_PASSWORD 값입니다.</p></form>';
+      '<p class="muted small">PM은 ADMIN_PASSWORD, 슈퍼관리자는 SUPER_PASSWORD 값으로 로그인합니다 (견적 서버 Cloudflare Secrets).</p></form>';
     $('#lf input').focus();
     $('#lf').onsubmit = function (e) {
       e.preventDefault();
@@ -73,7 +73,7 @@
   function shell() {
     app.innerHTML = '<header class="d-top"><a class="brand" href="#">콘텐츠랩스<b>PM</b></a>' +
       '<nav class="tabs" role="tablist"><button role="tab" data-tab="quotes">견적 검토</button><button role="tab" data-tab="rates">단가 학습</button></nav>' +
-      '<span class="sp"></span><button class="btn sm ghost" id="lo">로그아웃</button></header><div id="body"></div>';
+      '<span class="sp"></span><span class="chip" id="role"></span><button class="btn sm ghost" id="lo">로그아웃</button></header><div id="body"></div>';
     $('#lo').onclick = logout;
     $$('[data-tab]').forEach(function (b) { b.onclick = function () { location.hash = b.dataset.tab === 'rates' ? '#rates' : '#'; }; });
   }
@@ -101,17 +101,28 @@
       body.innerHTML = '<div class="desk"><aside class="side"><div class="filters">' +
         '<div class="seg" role="group" aria-label="상태">' +
         '<button data-f="pending">검토 대기</button><button data-f="issued">발행됨</button><button data-f="closed">보류·만료·회수</button><button data-f="all">전체</button></div>' +
-        '<input type="search" id="qs" placeholder="기관명·과정명·견적번호 검색"></div><ul class="qlist" id="ql"></ul></aside>' +
+        '<input type="search" id="qs" placeholder="기관명·과정명·견적번호 검색">' +
+        '<div class="row hide" id="delbar"><span class="small muted" id="pickn">선택 0건</span><span style="flex:1"></span>' +
+        '<button class="btn sm danger" id="delpick" disabled>선택 삭제</button><button class="btn sm ghost" id="dellog">삭제 기록</button></div></div>' +
+        '<ul class="qlist" id="ql"></ul></aside>' +
         '<section class="main" id="dm"><div class="empty">왼쪽에서 견적을 고르세요.</div></section></div>';
       $$('[data-f]', body).forEach(function (b) { b.onclick = function () { S.filter = b.dataset.f; drawList(); }; });
       $('#qs').oninput = function () { S.q = this.value.trim().toLowerCase(); drawList(); };
+      $('#delpick').onclick = function () { deleteFlow(Object.keys(S.picked)); };
+      $('#dellog').onclick = showDeletedLog;
       loadList();
     }
     $('.desk').classList.toggle('has-detail', !!id);
     if (id) openQuote(id); else { S.cur = null; $('#dm').innerHTML = '<div class="empty">왼쪽에서 견적을 고르세요.</div>'; drawList(); }
   }
   function loadList() {
-    return api('/api/admin/list').then(function (j) { S.items = j.items; drawList(); }).catch(fail);
+    return api('/api/admin/list').then(function (j) {
+      S.items = j.items; S.role = j.role; S.roleLabel = j.roleLabel; S.canDelete = !!j.canDelete;
+      var r = $('#role'); if (r) { r.textContent = j.roleLabel || ''; r.className = 'chip' + (j.canDelete ? ' revoked' : ''); }
+      if ($('#delbar')) $('#delbar').classList.toggle('hide', !S.canDelete);
+      drawList();
+      if (S.cur) drawDeleteCard();
+    }).catch(fail);
   }
   function drawList() {
     $$('[data-f]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.f === S.filter)); });
@@ -123,12 +134,15 @@
     });
     var cur = S.cur && S.cur.rec.id;
     $('#ql').innerHTML = list.length ? list.map(function (x) {
-      return '<li><button data-id="' + esc(x.id) + '"' + (x.id === cur ? ' aria-current="true"' : '') + '>' +
+      return '<li' + (S.canDelete ? ' style="display:flex"' : '') + '>' + (S.canDelete ? '<label class="check" style="padding:0 0 0 10px;border-bottom:1px solid var(--line)"><input type="checkbox" class="pk" data-id="' + esc(x.id) + '"' + (S.picked[x.id] ? ' checked' : '') + ' aria-label="' + esc(x.id) + ' 선택"></label>' : '') +
+        '<button data-id="' + esc(x.id) + '"' + (x.id === cur ? ' aria-current="true"' : '') + '>' +
         '<div class="l1"><span class="mono">' + esc(x.id) + '</span><span class="chip ' + x.status + '">' + STATUS[x.status] + '</span></div>' +
         '<div class="l2">' + esc(x.client_name || '(기관명 없음)') + '</div>' +
         '<div class="l3"><span>' + esc((x.content_type || '') + ' ' + (x.sessions || '') + '차시') + (x.edited ? ' · 수정함' : '') + '</span><span class="num">' + (x.total != null ? won(x.total) + '원' : '') + '</span></div></button></li>';
     }).join('') : '<li class="empty">해당하는 견적이 없습니다.</li>';
     $$('#ql button').forEach(function (b) { b.onclick = function () { location.hash = '#' + b.dataset.id; }; });
+    $$('#ql .pk').forEach(function (c) { c.onchange = function () { if (c.checked) S.picked[c.dataset.id] = 1; else delete S.picked[c.dataset.id]; pickCount(); }; });
+    pickCount();
   }
 
   /* ── 견적 1건 ── */
@@ -209,6 +223,8 @@
     // 발행
     h += '<div class="card"><h2>발행</h2><div id="iss"></div></div>';
 
+    h += '<div id="delcard"></div>';
+
     // 기록
     h += '<div class="card"><h2>처리 기록</h2><ul class="hist">' + (r.history || []).slice().reverse().map(function (x) {
       return '<li><span class="mono muted">' + esc(t16(x.at)) + '</span><span>' + esc(x.action) + '</span><span class="muted">' + esc(x.by || '') + '</span></li>';
@@ -218,7 +234,7 @@
       '<button class="btn" id="xl">내부 검토용 엑셀</button>' + (d.link ? '<a class="btn" href="' + esc(d.link) + '" target="_blank" rel="noopener">고객 화면 열기</a>' : '') + '</div>';
 
     $('#dm').innerHTML = h;
-    drawLines(); drawSum(); drawIssue();
+    drawLines(); drawSum(); drawIssue(); drawDeleteCard();
     bindDetail();
   }
 
@@ -362,6 +378,63 @@
     bind('#a_extend', act('extend', '유효기간을 연장할까요?', '오늘부터 ' + S.cur.validDays + '일 동안 열리도록 연장하고 고객에게 다시 보냅니다.', '연장·발송'));
     bind('#a_revoke', act('revoke', '링크를 회수할까요?', '고객이 더 이상 견적서를 열 수 없게 됩니다.', '회수'));
     bind('#cp', function () { var i = $('#lnk'); i.select(); (navigator.clipboard ? navigator.clipboard.writeText(i.value) : Promise.reject()).then(function () { toast('링크를 복사했습니다.'); }, function () { document.execCommand('copy'); toast('링크를 복사했습니다.'); }); });
+  }
+
+  /* ── 삭제 (슈퍼관리자) ── */
+  function pickCount() {
+    var n = Object.keys(S.picked).length, el = $('#pickn'), b = $('#delpick');
+    if (el) el.textContent = '선택 ' + n + '건';
+    if (b) b.disabled = !n;
+  }
+  function drawDeleteCard() {
+    var box = $('#delcard'); if (!box || !S.cur) return;
+    box.innerHTML = S.canDelete ? '<div class="card" style="border-color:var(--bad)"><h2>견적 삭제 <span class="chip revoked">슈퍼관리자</span></h2>' +
+      '<p class="small muted" style="margin:0 0 10px">허위·장난 접수를 지웁니다. 지우면 목록과 단가 학습에서 빠지고 되살릴 수 없습니다. 견적번호·시각·사유만 「삭제 기록」에 남습니다.</p>' +
+      '<button class="btn danger" id="del1">이 견적 삭제</button></div>' : '';
+    if ($('#del1')) $('#del1').onclick = function () { deleteFlow([S.cur.rec.id]); };
+  }
+  function deleteFlow(ids) {
+    if (!ids.length) return;
+    var info = ids.map(function (id) { return S.items.filter(function (x) { return x.id === id; })[0] || { id: id }; });
+    var issued = info.filter(function (x) { return x.status === 'issued'; });
+    var m = document.createElement('div'); m.className = 'modal';
+    m.innerHTML = '<form class="box" role="dialog" aria-modal="true"><h3>견적 ' + ids.length + '건을 삭제할까요?</h3>' +
+      '<ul class="small" style="max-height:160px;overflow:auto;padding-left:18px;margin:8px 0">' + info.map(function (x) {
+        return '<li><span class="mono">' + esc(x.id) + '</span> ' + esc(x.client_name || '') + (x.status ? ' · ' + STATUS[x.status] : '') + '</li>';
+      }).join('') + '</ul>' +
+      (issued.length ? '<p class="note bad small">' + issued.length + '건은 고객에게 발행 중입니다. 지우면 고객의 견적서 링크가 바로 열리지 않습니다.</p>' : '') +
+      '<label class="field" style="margin-top:8px"><span>삭제 사유 (기록에 남음)</span><input type="text" name="reason" maxlength="100" value="허위·장난 접수" required></label>' +
+      '<label class="field" style="margin-top:8px"><span>확인을 위해 <b>삭제</b>라고 입력해 주세요</span><input type="text" name="ok" autocomplete="off"></label>' +
+      '<p class="note bad small" style="margin-top:10px">삭제하면 되살릴 수 없습니다.</p>' +
+      '<div class="row" style="justify-content:flex-end;margin-top:8px"><button type="button" class="btn" data-x>취소</button><button class="btn primary" style="background:var(--bad);border-color:var(--bad)">삭제</button></div></form>';
+    document.body.appendChild(m);
+    var f = $('form', m);
+    $('[data-x]', m).onclick = function () { m.remove(); };
+    f.ok.focus();
+    f.onsubmit = function (e) {
+      e.preventDefault();
+      if (f.ok.value.trim() !== '삭제') { f.ok.focus(); return toast('확인 칸에 「삭제」라고 입력해 주세요.'); }
+      if (!f.reason.value.trim()) return toast('삭제 사유를 적어 주세요.');
+      var btn = $('button.primary', m); btn.disabled = true;
+      api('/api/admin/delete', { ids: ids, reason: f.reason.value.trim(), force_issued: issued.length > 0 }).then(function (j) {
+        m.remove();
+        j.deleted.forEach(function (id) { delete S.picked[id]; });
+        toast(j.deleted.length + '건을 삭제했습니다.' + (j.missing.length ? ' (' + j.missing.length + '건은 이미 없었습니다)' : ''));
+        S.dirty = false;
+        if (S.cur && j.deleted.indexOf(S.cur.rec.id) >= 0) { S.cur = null; location.hash = '#'; }
+        loadList();
+      }).catch(function (er) { btn.disabled = false; fail(er); });
+    };
+  }
+  function showDeletedLog() {
+    api('/api/admin/deleted').then(function (j) {
+      var m = document.createElement('div'); m.className = 'modal';
+      m.innerHTML = '<div class="box" style="max-width:560px"><h3>삭제 기록</h3>' + (j.items.length ? '<div class="scroll-x" style="max-height:60vh;overflow:auto"><table class="t"><thead><tr><th>견적번호</th><th>삭제 시각</th><th>사유</th><th>삭제한 사람</th></tr></thead><tbody>' +
+        j.items.map(function (x) { return '<tr><td class="mono">' + esc(x.id) + '</td><td class="mono small">' + esc(t16(x.at)) + '</td><td>' + esc(x.reason) + '</td><td>' + esc(x.by) + '</td></tr>'; }).join('') +
+        '</tbody></table></div>' : '<p class="muted">지운 견적이 없습니다.</p>') + '<div class="row" style="justify-content:flex-end;margin-top:12px"><button class="btn" data-x>닫기</button></div></div>';
+      document.body.appendChild(m);
+      m.onclick = function (e) { if (e.target === m || e.target.hasAttribute('data-x')) m.remove(); };
+    }).catch(fail);
   }
 
   /* ── 엑셀 ── */
