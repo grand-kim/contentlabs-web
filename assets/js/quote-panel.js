@@ -247,6 +247,11 @@
           <label>차시 수<input type="number" name="sessions" min="1" max="200" value="${esc(v.sessions)}" inputmode="numeric"></label>
           <label>차시당 분량(분)<input type="number" name="minutes_per_session" min="5" max="120" value="${esc(v.minutes_per_session)}" inputmode="numeric"></label>
         </div><small class="qc-help">영상 1편이면 차시 수를 1로 두세요.</small>`;
+      else if (s.kind === 'contact') field = `<div class="qc-nums">
+          <label>담당자 성함<input type="text" name="name" maxlength="40" autocomplete="name" value="${esc(v.name)}" placeholder="홍길동"></label>
+          <label>전화번호<input type="tel" name="phone" maxlength="20" autocomplete="tel" inputmode="tel" value="${esc(v.phone)}" placeholder="010-1234-5678"></label>
+          <label style="grid-column:1/-1">이메일 (견적서를 받을 주소)<input type="email" name="email" maxlength="120" autocomplete="email" value="${esc(v.email)}" placeholder="name@company.com"></label>
+        </div>`;
       else if (s.kind === 'options') field = `<div class="qc-checks">
           <label><input type="checkbox" name="voice_over"${v.voice_over ? ' checked' : ''}><span>전문 성우 녹음</span></label>
           <label><input type="checkbox" name="subtitles"${v.subtitles ? ' checked' : ''}><span>자막 제작</span></label>
@@ -262,6 +267,12 @@
         if (['text', 'textarea', 'select', 'type'].includes(s.kind)) vals.value = String(fd.get('value') || '');
         if (s.kind === 'volume') { vals.sessions = +fd.get('sessions'); vals.minutes_per_session = +fd.get('minutes_per_session'); }
         if (s.kind === 'options') { for (const k of ['voice_over', 'subtitles', 'interaction']) vals[k] = fd.get(k) === 'on'; vals.filming_days = +fd.get('filming_days') || 0; }
+        if (s.kind === 'contact') {
+          for (const k of ['name', 'email', 'phone']) vals[k] = String(fd.get(k) || '').trim();
+          if (!vals.name) { showError('담당자 성함을 입력해 주세요.'); return; }
+          if (!/^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/.test(vals.email)) { showError('이메일 주소를 다시 확인해 주세요.'); return; }
+          if (!/^0\d{8,10}$/.test(vals.phone.replace(/\D/g, ''))) { showError('전화번호를 다시 확인해 주세요. 예: 010-1234-5678'); return; }
+        }
         if ((s.kind === 'text' || s.kind === 'textarea') && !s.optional && !vals.value.trim()) { showError('내용을 입력해 주세요.'); return; }
         act({ type: 'next', values: vals });
       });
