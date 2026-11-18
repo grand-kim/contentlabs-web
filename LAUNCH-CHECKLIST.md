@@ -51,8 +51,8 @@
 | C-2 | 솔루션 데모 URL·체험 계정 입력 (CDMS·LMS·화이트보드) | 대기 | `config.js`의 `demo` |
 | C-3 | 네이버 블로그·티스토리 개설 후 아이디 입력 | 대기 | `config.js`의 `blog.naver`·`blog.tistory`. 견적 서버를 한 번 다시 올려야(`npx wrangler deploy`) 최신 글을 읽어 옴 |
 | C-4 | 견적 서버(Cloudflare Workers) 배포 후 `config.js`의 `quoteApi`에 주소 입력 | **대기** | 비어 있으면 예전 Streamlit 화면으로 열림. `/health`에서 ai·rates·store 확인 |
-| C-5 | 고객 견적 링크(`?q=`)·PM 검토 화면은 아직 Streamlit — 고객이 링크를 열 때 잠든 화면이 보일 수 있음 | 확인 필요 | 다음 단계: 견적서 열람 화면을 홈페이지로 옮기기 |
-| C-6 | Streamlit 앱과 견적 서버가 같은 견적 데이터 저장소(GitHub)를 쓰는지 | 확인 필요 | 다르면 새 대화창 접수가 PM 검토 화면에 안 보임 |
+| C-5 | 고객 견적서(`quote.html?q=`)·PM 검토 화면(`admin.html`)을 홈페이지로 옮김 (2026-11-18) | 확인 필요 | 견적 서버에 `ADMIN_PASSWORD` 넣고 다시 배포 → admin.html 로그인 → 시험 견적 1건 발행해 링크 열어 보기 |
+| C-6 | 견적 데이터 저장소(GitHub) 하나를 견적 서버·검토 화면이 같이 씀. 단가 학습 반영값은 같은 저장소의 `rates/overrides.json` | 확인 필요 | 예전에 Streamlit 으로 보낸 고객 링크는 Streamlit 앱을 끄기 전까지 그대로 열림 |
 
 ## D. 콘텐츠 · 권리
 
