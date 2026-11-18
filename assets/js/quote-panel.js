@@ -314,8 +314,9 @@
         <form class="qc-form" novalidate>
           <label class="full"><span>견적을 받을 이메일 <i aria-hidden="true">*</i></span><input type="email" name="email" required maxlength="120" autocomplete="email" placeholder="name@company.com" value="${esc(p.email)}"></label>
           <label>담당자 성함<input type="text" name="name" maxlength="40" autocomplete="name" value="${esc(p.name)}"></label>
+          <label><span>연락처(전화) <i aria-hidden="true">*</i></span><input type="tel" name="phone" required maxlength="20" autocomplete="tel" inputmode="tel" placeholder="010-1234-5678" value="${esc(p.phone)}"></label>
           <label>기관(회사)명<input type="text" name="org" maxlength="100" autocomplete="organization" value="${esc(p.org)}"></label>
-          <label class="full">과정명<input type="text" name="course" maxlength="150" placeholder="예: 개인정보보호 기본교육" value="${esc(p.course)}"></label>
+          <label>과정명<input type="text" name="course" maxlength="150" placeholder="예: 개인정보보호 기본교육" value="${esc(p.course)}"></label>
           <label class="full qc-agree"><input type="checkbox" name="agree"><span>[필수] 견적 회신과 상담을 위해 위 정보와 상담 내용을 수집·이용하는 데 동의합니다. <a href="privacy.html" target="_blank" rel="noopener">개인정보 처리방침</a></span></label>
           <button type="submit" class="btn primary full">견적 요청하기</button>
         </form>`;
@@ -326,8 +327,11 @@
         const fd = new FormData(f);
         const email = String(fd.get('email') || '').trim();
         if (!/^[^\s@<>()/,;]+@[^\s@<>()/,;]+\.[A-Za-z]{2,}$/.test(email)) { showError('이메일 주소를 다시 확인해 주세요.'); f.email.focus(); return; }
+        const phone = String(fd.get('phone') || '').trim();
+        const digits = phone.replace(/\D/g, '');
+        if (!/^0\d{8,10}$/.test(digits)) { showError('연락처(전화번호)를 다시 확인해 주세요. 예: 010-1234-5678'); f.phone.focus(); return; }
         if (!fd.get('agree')) { showError('개인정보 수집·이용에 동의해 주셔야 견적을 보내 드릴 수 있습니다.'); return; }
-        act({ type: 'request', form: { email, name: fd.get('name'), org: fd.get('org'), course: fd.get('course'), agree: true } });
+        act({ type: 'request', form: { email, phone, name: fd.get('name'), org: fd.get('org'), course: fd.get('course'), agree: true } });
       });
       return d;
     }
