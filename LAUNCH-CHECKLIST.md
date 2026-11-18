@@ -21,7 +21,7 @@
 | A-4 | 보유기간(견적 상담 1년 · 문의 1년 · 접속기록 1년)이 실제 운영과 일치 | 확인됨 (2026-11-07) | `privacy.html` 제1조 |
 | A-5 | 웹사이트 호스팅 사업자명 기재 | **확인 필요** | `privacy.html` 제4조 위탁 표 |
 | A-6 | 뉴스레터 → 블로그로 바꿔 구독 정보 수집 없음 — 처리방침·약관에서 뉴스레터 조항 삭제함 (2026-11-13) | 확인됨 (2026-11-13) | `privacy.html` 제1조·`terms.html` 제2·4·5조. 나중에 이메일 구독을 다시 받으면 조항 복구 |
-| A-7 | 국외 이전 고지가 실제 운영과 일치 — Cloudflare(견적 서버)·OpenAI(AI 답변)·GitHub(접수 보관)·Snowflake(PM 검토·견적 링크) | 확인됨 (2026-11-08) | `privacy.html` 제4조·제5조. AI를 Claude로 바꾸면 OpenAI 줄을 Anthropic, PBC로 교체 |
+| A-7 | 국외 이전 고지가 실제 운영과 일치 — Cloudflare(견적 서버)·OpenAI(AI 답변)·GitHub(접수 보관)·(Snowflake·Streamlit은 2026-11-18 정리하며 삭제) | 확인됨 (2026-11-18) | `privacy.html` 제4조·제5조. AI를 Claude로 바꾸면 OpenAI 줄을 Anthropic, PBC로 교체 |
 | A-8 | 쿠키·분석도구 서술이 실제와 일치 — 2026-11-17 네이버 프리미엄 로그분석(공통 스크립트, 전 페이지) 설치하며 제9조 수정. GA 등 다른 도구를 더 넣으면 다시 수정 | 확인됨 (2026-11-17) | `privacy.html` 제9조 |
 | A-9 | 네이버 전환추적: 공통 스크립트 설치 후 검색광고 센터에서 **검수 요청** / 전환은 「견적 문의」 버튼 클릭 시점(유형 4 신청/예약, 페이지당 1회)으로 결정·설치 (2026-11-17, `quote-panel.js` trackInquiry) | **검수 결과 확인 필요** | 각 HTML `</body>` 직전, wa = `s_dc8ed50e2d6` |
 
@@ -50,9 +50,9 @@
 | C-1 | 견적 알림 메일 — 메일플러그 SMTP 계정을 견적 서버(Cloudflare) Secrets에 설정 | 대기 | 계정 수령 후. 챗봇 폴더 `worker/README.md` 「알림 메일」 |
 | C-2 | 솔루션 데모 URL·체험 계정 입력 (CDMS·LMS·화이트보드) | 대기 | `config.js`의 `demo` |
 | C-3 | 네이버 블로그·티스토리 개설 후 아이디 입력 | 대기 | `config.js`의 `blog.naver`·`blog.tistory`. 견적 서버를 한 번 다시 올려야(`npx wrangler deploy`) 최신 글을 읽어 옴 |
-| C-4 | 견적 서버(Cloudflare Workers) 배포 후 `config.js`의 `quoteApi`에 주소 입력 | **대기** | 비어 있으면 예전 Streamlit 화면으로 열림. `/health`에서 ai·rates·store 확인 |
-| C-5 | 고객 견적서(`quote.html?q=`)·PM 검토 화면(`admin.html`)을 홈페이지로 옮김 (2026-11-18) | 확인 필요 | 견적 서버에 `ADMIN_PASSWORD` 넣고 다시 배포 → admin.html 로그인 → 시험 견적 1건 발행해 링크 열어 보기 |
-| C-6 | 견적 데이터 저장소(GitHub) 하나를 견적 서버·검토 화면이 같이 씀. 단가 학습 반영값은 같은 저장소의 `rates/overrides.json` | 확인 필요 | 예전에 Streamlit 으로 보낸 고객 링크는 Streamlit 앱을 끄기 전까지 그대로 열림 |
+| C-4 | 견적 서버(Cloudflare Workers) 주소를 `config.js`의 `quoteApi`에 입력 | 확인됨 (2026-11-18) | Streamlit 예비 주소는 2026-11-18 삭제 — quoteApi 가 비면 연락처 안내만 나옴. `/health`에서 rates·store·admin·super 확인 |
+| C-5 | 고객 견적서(`quote.html?q=`)·PM 검토 화면(`admin.html`)을 홈페이지로 옮김. PM(`ADMIN_PASSWORD`)·슈퍼관리자(`SUPER_PASSWORD`, 견적 삭제) 분리 | 확인됨 (2026-11-18) | 시험 견적 1건 발행해 고객 링크·PDF·엑셀 확인 권장 |
+| C-6 | 견적 데이터 저장소(GitHub) 하나를 견적 서버·검토 화면이 같이 씀. 단가 학습 반영값은 `rates/overrides.json`, 삭제 기록은 `audit/deleted.json` | 확인됨 (2026-11-18) | Streamlit 앱을 지우면 예전에 Streamlit 주소로 보낸 고객 링크는 열리지 않음 → 검토 화면 「발행됨」에서 「30일 연장해 재발송」으로 새 링크를 보내면 됨 |
 
 ## D. 콘텐츠 · 권리
 
