@@ -179,3 +179,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:14px}
 .smp-body .btn{margin-top:6px}
 .print-only{display:none}
 @media print{.print-only{display:block;word-break:break-all}.samples{grid-template-columns:1fr 1fr}.smp{break-inside:avoid}}
+/* 고객 견적서 — 담당자 */
+.contact{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--soft)}
+.contact a{text-decoration:none;font-family:var(--f-mono)}
+.contact a:hover{text-decoration:underline}

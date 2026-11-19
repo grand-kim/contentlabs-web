@@ -156,7 +156,7 @@
     S.work = {
       lines: JSON.parse(JSON.stringify(r.quote['내역'])),
       adjust: { amount: +(r.adjust || {}).amount || 0, reason: (r.adjust || {}).reason || '' },
-      customer_note: r.customer_note || '', pm_memo: r.pm_memo || '', email: (r.customer || {}).email || '', title: r.title || '', samples: JSON.parse(JSON.stringify(r.samples || [])),
+      customer_note: r.customer_note || '', pm_memo: r.pm_memo || '', email: (r.customer || {}).email || '', title: r.title || '', samples: JSON.parse(JSON.stringify(r.samples || [])), pm_contact: initContact(r),
     };
     S.preview = d.final;
     drawDetail();
@@ -231,6 +231,14 @@
 
     // 금액
     h += '<div class="card"><h2>금액</h2><div id="sum"></div></div>';
+
+    // 담당자
+    var pc = S.work.pm_contact, dc = S.cur.contactDefault || {};
+    h += '<div class="card"><h2>담당자 <span class="muted small" style="font-weight:400">고객 메일·견적서에 표시</span></h2><div class="grid g4">' +
+      '<label class="field"><span>이름·직함</span><input type="text" id="pcn" maxlength="20" placeholder="' + esc(dc.name || '예: 김윤호 이사') + '" value="' + esc(pc.name) + '"></label>' +
+      '<label class="field"><span>전화</span><input type="tel" id="pcp" maxlength="20" placeholder="' + esc(dc.phone || '예: 010-1234-5678') + '" value="' + esc(pc.phone) + '"></label>' +
+      '<label class="field" style="grid-column:span 2"><span>이메일 (고객이 메일에 「회신」하면 이 주소로 감)</span><input type="email" id="pce" maxlength="120" placeholder="' + esc(dc.email || 'name@contentlabs.co.kr') + '" value="' + esc(pc.email) + '"></label></div>' +
+      '<p class="small muted" style="margin:6px 0 0">한 번 넣으면 이 브라우저에서 다음 견적에도 자동으로 채워집니다. 발행 뒤에도 고칠 수 있습니다.' + (S.contactPending ? ' <b>지금 값은 아직 저장 전입니다 — 저장하거나 발송하면 함께 저장됩니다.</b>' : '') + '</p></div>';
 
     // 발행
     h += '<div class="card"><h2>발행</h2><div id="iss"></div></div>';
@@ -324,6 +332,7 @@
     var w = S.work, o = { id: S.cur.rec.id, adjust: w.adjust, customer_note: w.customer_note, pm_memo: w.pm_memo, email: w.email };
     if (S.cur.editable) o.title = w.title;
     o.samples = w.samples.filter(function (x) { return String(x.url || '').trim(); });
+    o.pm_contact = w.pm_contact;
     if (S.cur.editable) o.lines = w.lines;
     for (var k in extra) o[k] = extra[k];
     return o;
@@ -333,8 +342,21 @@
     api('/api/admin/save', payload({ dry: true })).then(function (d) { S.preview = d.final; drawSum(); }).catch(function (e) { $('#sum').insertAdjacentHTML('afterbegin', '<p class="note bad small">' + esc(e.message) + '</p>'); });
   }
   function save(extra) {
-    return api('/api/admin/save', payload(extra)).then(function (d) { setCur(d); loadList(); toast('저장했습니다.'); return d; });
+    return api('/api/admin/save', payload(extra)).then(function (d) {
+      var c = d.rec.pm_contact;                  // 서버가 정리한 값(전화번호 하이픈 등)을 기억
+      if (c && (c.name || c.phone || c.email)) { try { localStorage.setItem('cl_pm_contact', JSON.stringify(c)); } catch (e) { /* */ } }
+      setCur(d); loadList(); toast('저장했습니다.'); return d;
+    });
   }
+  /* 담당자: 이 견적에 저장된 값 → 없으면 이 브라우저에서 마지막으로 쓴 값 */
+  function initContact(r) {
+    S.contactPending = false;
+    if (r.pm_contact) return { name: r.pm_contact.name || '', phone: r.pm_contact.phone || '', email: r.pm_contact.email || '' };
+    var last = null; try { last = JSON.parse(localStorage.getItem('cl_pm_contact') || 'null'); } catch (e) { last = null; }
+    if (last && (last.name || last.phone || last.email)) { S.contactPending = true; return { name: last.name || '', phone: last.phone || '', email: last.email || '' }; }
+    return { name: '', phone: '', email: '' };
+  }
+  function needSave() { return S.dirty || S.contactPending; }
 
   function bindDetail() {
     var root = $('#dm');
@@ -374,6 +396,9 @@
     bindVal('#adjr', function (v) { S.work.adjust.reason = v; });
     bindVal('#cn', function (v) { S.work.customer_note = v; });
     bindVal('#ttl', function (v) { S.work.title = v; });
+    bindVal('#pcn', function (v) { S.work.pm_contact.name = v; });
+    bindVal('#pcp', function (v) { S.work.pm_contact.phone = v; });
+    bindVal('#pce', function (v) { S.work.pm_contact.email = v; });
     bindSamples();
     if ($('#ttlfill')) $('#ttlfill').onclick = function () {
       var c = (S.cur.rec.customer || {}).course_title || '';
@@ -387,7 +412,7 @@
 
     var act = function (action, title, body, label) {
       var run = function () {
-        var p = S.dirty ? save() : Promise.resolve();
+        var p = needSave() ? save() : Promise.resolve();
         return p.then(function () { return api('/api/admin/act', { id: S.cur.rec.id, action: action }); }).then(function (d) {
           setCur(d); loadList();
           var m = d.mailResult;
@@ -409,7 +434,7 @@
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) { $('#tto').focus(); return toast('받을 이메일 주소를 확인해 주세요.'); }
       try { localStorage.setItem('cl_test_to', to); } catch (e) { /* */ }
       b.disabled = true;
-      (S.dirty ? save() : Promise.resolve()).then(function () {
+      (needSave() ? save() : Promise.resolve()).then(function () {
         return api('/api/admin/act', { id: S.cur.rec.id, action: 'test', to: to });
       }).then(function (d) {
         setCur(d);

@@ -62,6 +62,12 @@
     h += '<tr><td>공급가액</td><td class="r num">' + won(d.supply) + '원</td></tr><tr><td>부가세</td><td class="r num">' + won(d.vat) + '원</td></tr>' +
       '<tr><th>합계</th><th class="r num">' + won(d.total) + '원</th></tr></tbody></table>';
     if (d.note) h += '<h2>■ 비고</h2><p style="white-space:pre-wrap">' + esc(d.note) + '</p>';
+    if (d.contact) {
+      var ct = d.contact;
+      h += '<h2>■ 담당자</h2><div class="contact">' + (ct.name ? '<b>' + esc(ct.name) + '</b>' : '') +
+        (ct.phone ? '<a href="tel:' + esc(ct.phone.replace(/[^0-9+]/g, '')) + '">☎ ' + esc(ct.phone) + '</a>' : '') +
+        (ct.email ? '<a href="mailto:' + esc(ct.email) + '?subject=' + encodeURIComponent('[견적 문의] ' + d.id) + '">✉ ' + esc(ct.email) + '</a>' : '') + '</div>';
+    }
     h += '<div class="foot"><p>※ 단가 기준: ' + esc(d.wage_source) + '</p><p>※ 본 견적서는 담당 PM이 검토해 발행한 견적이며, 유효기간 이후에는 다시 요청해 주세요.</p><p>발행: 주식회사 콘텐츠랩스</p></div></article>';
     app.innerHTML = h;
     document.getElementById('pdf').onclick = function () { window.print(); };
@@ -114,6 +120,7 @@
       rows.push(['공급가액', d.supply], ['부가세', d.vat], ['합계', d.total]);
       if ((d.samples || []).length) { rows.push([], ['참고 샘플']); d.samples.forEach(function (x) { rows.push([x.title, x.url, x.note || '']); }); }
       if (d.note) rows.push([], ['비고', d.note]);
+      if (d.contact) rows.push([], ['담당자', [d.contact.name, d.contact.phone, d.contact.email].filter(Boolean).join(' / ')]);
       rows.push([], ['단가 기준: ' + d.wage_source], ['발행: 주식회사 콘텐츠랩스']);
       var ws = XLSX.utils.aoa_to_sheet(rows);
       ws['!cols'] = [{ wch: 28 }, { wch: 22 }, { wch: 12 }, { wch: 12 }, { wch: 14 }, { wch: 16 }];
