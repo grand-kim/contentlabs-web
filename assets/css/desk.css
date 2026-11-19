@@ -166,3 +166,16 @@ details summary{cursor:pointer;color:var(--muted);font-size:14px}
 }
 @media (min-width:901px){ .back-to-list{display:none!important} }
 .lines td[data-amt]{white-space:nowrap}
+.lines select{min-width:96px;min-height:32px;padding:4px 6px;font-size:14px}
+/* 고객 견적서 — 참고 샘플 */
+.samples{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:8px}
+.smp{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface);display:flex;flex-direction:column}
+.smp-play{aspect-ratio:16/9;width:100%;border:0;cursor:pointer;background:linear-gradient(135deg,#15171A,#2E3330);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-weight:600}
+.smp-play:hover .smp-tri{transform:scale(1.08)}
+.smp-tri{width:52px;height:52px;border-radius:50%;background:var(--lime);position:relative;transition:transform .15s}
+.smp-tri::after{content:"";position:absolute;left:21px;top:16px;border-left:15px solid #15171A;border-top:10px solid transparent;border-bottom:10px solid transparent}
+.smp-media{aspect-ratio:16/9;width:100%;border:0;display:block;background:#000}
+.smp-body{padding:10px 12px 12px;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.smp-body .btn{margin-top:6px}
+.print-only{display:none}
+@media print{.print-only{display:block;word-break:break-all}.samples{grid-template-columns:1fr 1fr}.smp{break-inside:avoid}}

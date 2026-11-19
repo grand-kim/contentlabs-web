@@ -156,7 +156,7 @@
     S.work = {
       lines: JSON.parse(JSON.stringify(r.quote['내역'])),
       adjust: { amount: +(r.adjust || {}).amount || 0, reason: (r.adjust || {}).reason || '' },
-      customer_note: r.customer_note || '', pm_memo: r.pm_memo || '', email: (r.customer || {}).email || '',
+      customer_note: r.customer_note || '', pm_memo: r.pm_memo || '', email: (r.customer || {}).email || '', title: r.title || '', samples: JSON.parse(JSON.stringify(r.samples || [])),
     };
     S.preview = d.final;
     drawDetail();
@@ -208,6 +208,18 @@
       '<div class="scroll-x"><table class="t lines"><thead><tr><th>항목</th><th>구분</th>' + (pub ? '<th>분류</th>' : '') +
       '<th class="r">수량</th><th>단위</th><th class="r">단가</th><th class="r">금액</th><th></th></tr></thead><tbody id="lb"></tbody></table></div></div>';
 
+    // 견적명
+    var course = (c.course_title || '').trim();
+    h += '<div class="card"><h2>견적명</h2>' +
+      '<div class="row"><input type="text" id="ttl" maxlength="60" style="flex:1;min-width:240px" placeholder="이러닝 콘텐츠 제작 견적서" value="' + esc(S.work.title) + '"' + (ed ? '' : ' disabled') + '>' +
+      (ed && course ? '<button class="btn sm" id="ttlfill" type="button">과정명으로 채우기</button>' : '') + '</div>' +
+      '<p class="small muted" style="margin:6px 0 0">고객 견적서의 제목, 고객에게 가는 메일 제목·본문에 쓰입니다. 비워 두면 「이러닝 콘텐츠 제작 견적서」로 나갑니다. (60자까지)</p></div>';
+
+    // 참고 샘플
+    h += '<div class="card"><h2>참고 샘플<span class="chip" id="smpn">' + S.work.samples.length + '</span><span class="sp"></span><button class="btn sm" id="smpadd" type="button">+ 샘플 추가</button></h2>' +
+      '<p class="small muted" style="margin:-4px 0 10px">고객이 원하는 콘텐츠와 비슷한 샘플 링크를 넣으면 견적서 합계 아래 「참고 샘플」로 보입니다. 유튜브·비메오·mp4 영상은 견적서 안에서 바로 재생되고, HTML은 새 창으로 열립니다. 발행 뒤에도 고칠 수 있습니다.</p>' +
+      '<div id="smpl"></div></div>';
+
     // 조정·비고
     h += '<div class="card"><h2>조정·비고</h2><div class="grid g2">' +
       '<label class="field"><span>전체 조정 금액 (공급가액, VAT 별도 · 할인은 음수)</span><input type="number" id="adj" step="100000" value="' + S.work.adjust.amount + '"' + (ed ? '' : ' disabled') + '></label>' +
@@ -234,7 +246,7 @@
       '<button class="btn" id="xl">내부 검토용 엑셀</button>' + (d.link ? '<a class="btn" href="' + esc(d.link) + '" target="_blank" rel="noopener">고객 화면 열기</a>' : '') + '</div>';
 
     $('#dm').innerHTML = h;
-    drawLines(); drawSum(); drawIssue(); drawDeleteCard();
+    drawLines(); drawSum(); drawIssue(); drawDeleteCard(); drawSamples();
     bindDetail();
   }
 
@@ -293,6 +305,12 @@
         '<button class="btn danger" id="a_revoke"' + (st === 'revoked' ? ' disabled' : '') + '>링크 회수</button>' +
         (st === 'revoked' || st === 'expired' ? '<button class="btn" id="a_pending">검토 대기로 되돌리기 (수정 후 다시 발행)</button>' : '') + '</div>';
     }
+    if (st !== 'revoked' && st !== 'expired') {
+      var last = ''; try { last = localStorage.getItem('cl_test_to') || ''; } catch (e) { /* */ }
+      h += '<div style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)"><p class="small" style="margin:0 0 6px"><b>테스트 발송</b> <span class="muted">— 고객에게 갈 메일과 견적서를 내 메일로 먼저 받아 봅니다. 상태는 바뀌지 않습니다.</span></p>' +
+        '<div class="row"><input type="email" id="tto" placeholder="받을 이메일 (예: 내 회사 메일)" value="' + esc(last) + '" style="flex:1;min-width:220px">' +
+        '<button class="btn" id="a_test">테스트 발송</button></div><p class="small muted" id="tres" style="margin:6px 0 0"></p></div>';
+    }
     $('#iss').innerHTML = h;
   }
 
@@ -304,6 +322,8 @@
   }
   function payload(extra) {
     var w = S.work, o = { id: S.cur.rec.id, adjust: w.adjust, customer_note: w.customer_note, pm_memo: w.pm_memo, email: w.email };
+    if (S.cur.editable) o.title = w.title;
+    o.samples = w.samples.filter(function (x) { return String(x.url || '').trim(); });
     if (S.cur.editable) o.lines = w.lines;
     for (var k in extra) o[k] = extra[k];
     return o;
@@ -353,6 +373,13 @@
     bindVal('#adj', function (v) { S.work.adjust.amount = Math.trunc(Number(v) || 0); });
     bindVal('#adjr', function (v) { S.work.adjust.reason = v; });
     bindVal('#cn', function (v) { S.work.customer_note = v; });
+    bindVal('#ttl', function (v) { S.work.title = v; });
+    bindSamples();
+    if ($('#ttlfill')) $('#ttlfill').onclick = function () {
+      var c = (S.cur.rec.customer || {}).course_title || '';
+      var v = ('「' + c.trim() + '」 이러닝 콘텐츠 제작 견적서').slice(0, 60);
+      $('#ttl').value = v; S.work.title = v; markDirty();
+    };
     bindVal('#pm', function (v) { S.work.pm_memo = v; });
     bindVal('#em', function (v) { S.work.email = v; });
     $('#save').onclick = function () { this.disabled = true; var b = this; save().catch(fail).then(function () { b.disabled = false; }); };
@@ -377,7 +404,68 @@
     bind('#a_resend', act('resend', '메일을 다시 보낼까요?', '같은 링크를 고객에게 다시 보냅니다.', '보내기'));
     bind('#a_extend', act('extend', '유효기간을 연장할까요?', '오늘부터 ' + S.cur.validDays + '일 동안 열리도록 연장하고 고객에게 다시 보냅니다.', '연장·발송'));
     bind('#a_revoke', act('revoke', '링크를 회수할까요?', '고객이 더 이상 견적서를 열 수 없게 됩니다.', '회수'));
+    bind('#a_test', function () {
+      var to = $('#tto').value.trim(), b = this;
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) { $('#tto').focus(); return toast('받을 이메일 주소를 확인해 주세요.'); }
+      try { localStorage.setItem('cl_test_to', to); } catch (e) { /* */ }
+      b.disabled = true;
+      (S.dirty ? save() : Promise.resolve()).then(function () {
+        return api('/api/admin/act', { id: S.cur.rec.id, action: 'test', to: to });
+      }).then(function (d) {
+        setCur(d);
+        var m = d.mailResult || {};
+        var msg = m.ok ? to + ' 로 테스트 메일을 보냈습니다.' : '메일을 보내지 못했습니다(' + (m.why || '') + '). 아래 미리보기 링크로 화면만 확인할 수 있습니다.';
+        $('#tres').innerHTML = esc(msg) + ' <a href="' + esc(d.testLink) + '" target="_blank" rel="noopener">미리보기 열기</a>';
+        toast(m.ok ? '테스트 메일을 보냈습니다.' : '메일 발송 실패 — 미리보기 링크를 확인하세요.');
+      }).catch(fail).then(function () { var x = $('#a_test'); if (x) x.disabled = false; });
+    });
     bind('#cp', function () { var i = $('#lnk'); i.select(); (navigator.clipboard ? navigator.clipboard.writeText(i.value) : Promise.reject()).then(function () { toast('링크를 복사했습니다.'); }, function () { document.execCommand('copy'); toast('링크를 복사했습니다.'); }); });
+  }
+
+  /* ── 참고 샘플 ── */
+  function guessKind(url) {
+    var u = String(url || '').toLowerCase();
+    if (/youtube\.com\/|youtu\.be\/|vimeo\.com\/|\.(mp4|webm|mov|m4v)(\?|#|$)/.test(u)) return 'video';
+    if (/\.html?(\?|#|$)|\/interactive\/|\/$/.test(u)) return 'html';
+    return u ? 'html' : 'video';
+  }
+  function drawSamples() {
+    var box = $('#smpl'); if (!box) return;
+    $('#smpn').textContent = S.work.samples.length;
+    box.innerHTML = S.work.samples.length ? '<div class="scroll-x"><table class="t lines"><thead><tr><th>제목</th><th>링크 주소</th><th>종류</th><th>한 줄 설명</th><th></th></tr></thead><tbody>' +
+      S.work.samples.map(function (x, i) {
+        return '<tr data-s="' + i + '"><td><input class="w-name" data-k="title" maxlength="60" placeholder="예: 모션그래픽형 샘플" value="' + esc(x.title) + '"></td>' +
+          '<td><input data-k="url" style="min-width:260px" placeholder="https://" value="' + esc(x.url) + '"></td>' +
+          '<td><select data-k="kind"><option value="video"' + (x.kind === 'video' ? ' selected' : '') + '>영상</option><option value="html"' + (x.kind === 'html' ? ' selected' : '') + '>HTML</option><option value="link"' + (x.kind === 'link' ? ' selected' : '') + '>기타 링크</option></select></td>' +
+          '<td><input data-k="note" maxlength="120" style="min-width:200px" placeholder="예: 비슷한 길이·톤의 공공기관 과정" value="' + esc(x.note) + '"></td>' +
+          '<td style="white-space:nowrap"><a class="btn sm ghost' + (x.url ? '' : ' hide') + '" data-open href="' + esc(x.url || '#') + '" target="_blank" rel="noopener">열기</a>' +
+          '<button class="btn sm ghost danger" data-sdel type="button" aria-label="샘플 지우기">✕</button></td></tr>';
+      }).join('') + '</tbody></table></div>' : '<p class="muted small" style="margin:0">아직 넣은 샘플이 없습니다.</p>';
+  }
+  function bindSamples() {
+    $('#smpadd').onclick = function () {
+      if (S.work.samples.length >= 10) return toast('샘플은 10개까지 넣을 수 있습니다.');
+      S.work.samples.push({ title: '', url: '', kind: 'video', note: '' }); drawSamples();
+      var ins = $$('#smpl input[data-k="url"]'); ins[ins.length - 1].focus();
+    };
+    $('#smpl').addEventListener('input', function (e) {
+      var tr = e.target.closest('tr[data-s]'); if (!tr) return;
+      var x = S.work.samples[+tr.dataset.s], k = e.target.dataset.k;
+      x[k] = e.target.value;
+      if (k === 'url') {
+        var a = $('[data-open]', tr), ok = /^https?:\/\//i.test(x.url.trim());
+        a.classList.toggle('hide', !ok); if (ok) a.href = x.url.trim();
+        if (!x._kindSet) { x.kind = guessKind(x.url); $('select[data-k="kind"]', tr).value = x.kind; }
+      }
+      if (k === 'kind') x._kindSet = true;
+      S.dirty = true; $('#dirty').textContent = '저장하지 않은 수정이 있습니다';
+    });
+    $('#smpl').addEventListener('change', function (e) {
+      if (e.target.dataset.k === 'kind') { var x = S.work.samples[+e.target.closest('tr').dataset.s]; x.kind = e.target.value; x._kindSet = true; }
+    });
+    $('#smpl').addEventListener('click', function (e) {
+      if (e.target.hasAttribute('data-sdel')) { S.work.samples.splice(+e.target.closest('tr').dataset.s, 1); drawSamples(); S.dirty = true; $('#dirty').textContent = '저장하지 않은 수정이 있습니다'; }
+    });
   }
 
   /* ── 삭제 (슈퍼관리자) ── */
@@ -448,7 +536,7 @@
   function internalExcel() {
     loadXLSX(function () {
       var r = S.cur.rec, q = S.preview, c = r.customer || {}, auto = autoBy(), rows = [];
-      rows.push(['내부 검토용 견적 (고객에게 보내지 마세요)'], ['견적번호', r.id, '상태', S.cur.statusLabel], ['적용 기준', q['기준명']], []);
+      rows.push(['내부 검토용 견적 (고객에게 보내지 마세요)'], ['견적번호', r.id, '상태', S.cur.statusLabel], ['견적명', S.work.title || '이러닝 콘텐츠 제작 견적서'], ['적용 기준', q['기준명']], []);
       rows.push(['고객 정보']); INFO.forEach(function (p) { if (c[p[0]]) rows.push([p[1], c[p[0]]]); });
       rows.push([], ['제작 조건']); Object.keys(q['조건']).forEach(function (k) { rows.push([k, q['조건'][k]]); });
       rows.push([], ['산출 내역'], ['항목', '구분', '수량', '단위', '단가', '금액', '자동 수량', '자동 단가', '비고']);

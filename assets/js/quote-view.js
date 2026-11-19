@@ -5,7 +5,8 @@
   'use strict';
   var API = String((window.CL_CONFIG || {}).quoteApi || '').replace(/\/$/, '');
   var app = document.getElementById('app');
-  var key = new URLSearchParams(location.search).get('q') || '';
+  var params = new URLSearchParams(location.search);
+  var key = params.get('q') || '', pv = params.get('pv') || '';
   var data = null;
 
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -20,17 +21,34 @@
 
   function render(d) {
     data = d;
-    document.title = '견적서 ' + d.id + ' | 콘텐츠랩스';
+    var title = d.title || '이러닝 콘텐츠 제작 견적서';
+    document.title = title + ' | 콘텐츠랩스';
     var c = d.customer || {};
     var meta = [['견적번호', d.id], ['견적일', day(d.issued_at)], ['수신', c.client_name], ['유효기간', day(d.expires_at) + ' 까지'],
       ['과정명', c.course_title], ['적용 기준', d.track_label]];
     if (c.format) meta.push(['제작 포맷', c.format], ['', '']);
-    var h = '<div class="doc-actions no-print">' +
+    var h = d.preview ? '<p class="note warn no-print" style="margin-bottom:12px"><b>테스트 미리보기</b> — 담당 PM 확인용 화면입니다. ' +
+      '이 링크는 3일 뒤 닫히고, 열어도 고객 열람 기록에 남지 않습니다.</p>' : '';
+    h += '<div class="doc-actions no-print">' +
       '<button class="btn" type="button" id="xlsx">엑셀 내려받기</button>' +
       '<button class="btn primary" type="button" id="pdf">PDF로 저장·인쇄</button></div>';
-    h += '<article class="paper"><h1>이러닝 콘텐츠 제작 견적서</h1><div class="meta">';
+    h += '<article class="paper">' + (d.title ? '<p class="muted small" style="text-align:center;margin:0 0 4px;letter-spacing:.08em">견 적 서</p>' : '') +
+      '<h1>' + esc(title) + '</h1><div class="meta">';
     meta.forEach(function (m) { h += '<div class="k">' + esc(m[0]) + '</div><div>' + esc(m[1]) + '</div>'; });
     h += '</div><div class="total"><span>합계 금액 (VAT 포함)</span><span class="num">' + won(d.total) + '원</span></div>';
+    if ((d.samples || []).length) {
+      h += '<h2>■ 참고 샘플</h2><p class="muted small" style="margin:-4px 0 10px">요청하신 콘텐츠와 비슷하게 제작한 사례입니다.</p><div class="samples">';
+      d.samples.forEach(function (x, i) {
+        var emb = embedOf(x);
+        h += '<div class="smp" data-i="' + i + '">' +
+          (emb ? '<button type="button" class="smp-play no-print" data-play="' + i + '" aria-label="' + esc(x.title) + ' 재생"><span class="smp-tri" aria-hidden="true"></span><span>영상 보기</span></button>' : '') +
+          '<div class="smp-body"><span class="chip">' + (x.kind === 'video' ? '영상' : x.kind === 'html' ? 'HTML·인터랙티브' : '링크') + '</span>' +
+          '<b>' + esc(x.title) + '</b>' + (x.note ? '<span class="muted small">' + esc(x.note) + '</span>' : '') +
+          '<a class="btn sm no-print" href="' + esc(x.url) + '" target="_blank" rel="noopener noreferrer">' + (emb ? '새 창에서 보기' : '샘플 열어 보기') + ' ↗</a>' +
+          '<span class="print-only small mono">' + esc(x.url) + '</span></div></div>';
+      });
+      h += '</div>';
+    }
     h += '<h2>■ 제작 조건</h2><div class="scroll-x"><table class="t"><thead><tr><th>항목</th><th>내용</th></tr></thead><tbody>';
     Object.keys(d.cond || {}).forEach(function (k) { h += '<tr><td>' + esc(k) + '</td><td>' + esc(d.cond[k]) + '</td></tr>'; });
     h += '</tbody></table></div><h2>■ 산출 내역</h2><div class="scroll-x"><table class="t"><thead><tr><th>항목</th><th>구분</th><th class="r">수량</th><th>단위</th>' +
@@ -48,6 +66,30 @@
     app.innerHTML = h;
     document.getElementById('pdf').onclick = function () { window.print(); };
     document.getElementById('xlsx').onclick = excel;
+    Array.prototype.forEach.call(document.querySelectorAll('[data-play]'), function (b) {
+      b.onclick = function () {             // 누를 때만 외부 플레이어를 불러옴 (그 전에는 유튜브 등에 아무것도 보내지 않음)
+        var x = d.samples[+b.dataset.play], emb = embedOf(x), el;
+        if (emb.type === 'file') { el = document.createElement('video'); el.src = emb.src; el.controls = true; el.autoplay = true; el.playsInline = true; }
+        else { el = document.createElement('iframe'); el.src = emb.src; el.allow = 'autoplay; fullscreen; picture-in-picture'; el.allowFullscreen = true; el.title = x.title; el.referrerPolicy = 'strict-origin-when-cross-origin'; }
+        el.className = 'smp-media'; b.replaceWith(el);
+      };
+    });
+  }
+
+  /* 영상 샘플 → 견적서 안에서 재생할 주소 (유튜브·비메오·영상 파일). 그 밖의 링크는 새 창으로 */
+  function embedOf(x) {
+    if (!x || x.kind !== 'video') return null;
+    var u; try { u = new URL(x.url); } catch (e) { return null; }
+    var host = u.hostname.replace(/^www\.|^m\./, ''), id = '';
+    if (host === 'youtu.be') id = u.pathname.slice(1).split('/')[0];
+    else if (/(^|\.)youtube\.com$/.test(host)) id = u.searchParams.get('v') || (u.pathname.match(/^\/(?:embed|shorts|live)\/([^/?#]+)/) || [])[1] || '';
+    if (id && /^[\w-]{6,20}$/.test(id)) return { type: 'frame', src: 'https://www.youtube-nocookie.com/embed/' + id + '?rel=0&autoplay=1' };
+    if (host === 'vimeo.com' || host === 'player.vimeo.com') {
+      var v = (u.pathname.match(/(\d{6,})/) || [])[1];
+      if (v) return { type: 'frame', src: 'https://player.vimeo.com/video/' + v + '?dnt=1&autoplay=1' };
+    }
+    if (/\.(mp4|webm|m4v|mov)$/i.test(u.pathname)) return { type: 'file', src: u.href };
+    return null;
   }
 
   function loadXLSX(cb) {
@@ -59,8 +101,9 @@
   }
   function excel() {
     loadXLSX(function () {
+      var title = data.title || '이러닝 콘텐츠 제작 견적서';
       var d = data, c = d.customer || {}, rows = [];
-      rows.push(['이러닝 콘텐츠 제작 견적서'], []);
+      rows.push([title], []);
       rows.push(['견적번호', d.id, '견적일', day(d.issued_at)], ['수신', c.client_name, '유효기간', day(d.expires_at) + ' 까지'], ['과정명', c.course_title, '적용 기준', d.track_label], []);
       rows.push(['합계 금액 (VAT 포함)', d.total], [], ['제작 조건']);
       Object.keys(d.cond).forEach(function (k) { rows.push([k, d.cond[k]]); });
@@ -69,19 +112,20 @@
       rows.push([], ['금액']);
       (d.sums || []).forEach(function (s) { rows.push([s[0], s[1]]); });
       rows.push(['공급가액', d.supply], ['부가세', d.vat], ['합계', d.total]);
+      if ((d.samples || []).length) { rows.push([], ['참고 샘플']); d.samples.forEach(function (x) { rows.push([x.title, x.url, x.note || '']); }); }
       if (d.note) rows.push([], ['비고', d.note]);
       rows.push([], ['단가 기준: ' + d.wage_source], ['발행: 주식회사 콘텐츠랩스']);
       var ws = XLSX.utils.aoa_to_sheet(rows);
       ws['!cols'] = [{ wch: 28 }, { wch: 22 }, { wch: 12 }, { wch: 12 }, { wch: 14 }, { wch: 16 }];
       var wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, '견적서');
-      XLSX.writeFile(wb, '견적서_' + d.id + '.xlsx');
+      XLSX.writeFile(wb, (d.title ? d.title.replace(/[\\\/:*?"<>|「」]/g, '').trim().slice(0, 40) + '_' : '견적서_') + d.id + '.xlsx');
     });
   }
 
   if (!API) return state('견적서를 열 수 없습니다', '견적 서버 주소가 설정되지 않았습니다. 메일로 문의해 주세요.');
   if (!/^CL-\d{4}-\d{4}\.[A-Za-z0-9_-]{10,64}$/.test(key)) return state('견적서를 찾을 수 없습니다', '메일로 받으신 링크 주소가 맞는지 확인해 주세요.');
-  fetch(API + '/api/quote', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ q: key }) })
+  fetch(API + '/api/quote', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(pv ? { q: key, pv: pv } : { q: key }) })
     .then(function (r) { return r.json().then(function (j) { return [r.status, j]; }); })
     .then(function (res) {
       var j = res[1];
