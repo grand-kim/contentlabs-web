@@ -183,3 +183,5 @@ details summary{cursor:pointer;color:var(--muted);font-size:14px}
 .contact{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--soft)}
 .contact a{text-decoration:none;font-family:var(--f-mono)}
 .contact a:hover{text-decoration:underline}
+input[type=tel]{width:100%;min-height:38px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+input[type=tel]:focus{outline:2px solid var(--lime);outline-offset:1px}

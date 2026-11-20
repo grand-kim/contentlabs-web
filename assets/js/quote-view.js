@@ -68,10 +68,10 @@
         (ct.phone ? '<a href="tel:' + esc(ct.phone.replace(/[^0-9+]/g, '')) + '">☎ ' + esc(ct.phone) + '</a>' : '') +
         (ct.email ? '<a href="mailto:' + esc(ct.email) + '?subject=' + encodeURIComponent('[견적 문의] ' + d.id) + '">✉ ' + esc(ct.email) + '</a>' : '') + '</div>';
     }
-    h += '<div class="foot"><p>※ 단가 기준: ' + esc(d.wage_source) + '</p><p>※ 본 견적서는 담당 PM이 검토해 발행한 견적이며, 유효기간 이후에는 다시 요청해 주세요.</p><p>발행: 주식회사 콘텐츠랩스</p></div></article>';
+    h += '<div class="foot"><p>※ 단가 기준: ' + esc(d.wage_source) + '</p><p>※ 본 견적서는 담당 PM이 검토해 발행한 견적이며, 유효기간 이후에는 다시 요청해 주세요.</p><p>발행: 주식회사 콘텐츠랩스' + companyBits(d, true) + '</p></div></article>';
     app.innerHTML = h;
-    document.getElementById('pdf').onclick = function () { window.print(); };
-    document.getElementById('xlsx').onclick = excel;
+    document.getElementById('pdf').onclick = function () { track('pdf'); window.print(); };
+    document.getElementById('xlsx').onclick = function () { track('xlsx'); excel(); };
     Array.prototype.forEach.call(document.querySelectorAll('[data-play]'), function (b) {
       b.onclick = function () {             // 누를 때만 외부 플레이어를 불러옴 (그 전에는 유튜브 등에 아무것도 보내지 않음)
         var x = d.samples[+b.dataset.play], emb = embedOf(x), el;
@@ -98,6 +98,22 @@
     return null;
   }
 
+  /* 회사 대표 전화·팩스 (견적 서버 설정 COMPANY_PHONE · COMPANY_FAX) */
+  function companyBits(d, html) {
+    var c = d.company || {}, out = '';
+    if (c.phone) out += ' · 대표전화 ' + (html ? '<a href="tel:' + esc(c.phone.replace(/[^0-9+]/g, '')) + '">' + esc(c.phone) + '</a>' : c.phone);
+    if (c.fax) out += ' · 팩스 ' + (html ? esc(c.fax) : c.fax);
+    return out;
+  }
+
+  /* PDF 저장·엑셀 내려받기를 눌렀다는 기록 (담당 PM 확인용, 실패해도 무시) */
+  function track(type) {
+    try {
+      fetch(API + '/api/quote/event', { method: 'POST', headers: { 'content-type': 'application/json' }, keepalive: true,
+        body: JSON.stringify(pv ? { q: key, pv: pv, type: type } : { q: key, type: type }) }).catch(function () {});
+    } catch (e) { /* */ }
+  }
+
   function loadXLSX(cb) {
     if (window.XLSX) return cb();
     var s = document.createElement('script');
@@ -121,7 +137,7 @@
       if ((d.samples || []).length) { rows.push([], ['참고 샘플']); d.samples.forEach(function (x) { rows.push([x.title, x.url, x.note || '']); }); }
       if (d.note) rows.push([], ['비고', d.note]);
       if (d.contact) rows.push([], ['담당자', [d.contact.name, d.contact.phone, d.contact.email].filter(Boolean).join(' / ')]);
-      rows.push([], ['단가 기준: ' + d.wage_source], ['발행: 주식회사 콘텐츠랩스']);
+      rows.push([], ['단가 기준: ' + d.wage_source], ['발행: 주식회사 콘텐츠랩스' + companyBits(d, false)]);
       var ws = XLSX.utils.aoa_to_sheet(rows);
       ws['!cols'] = [{ wch: 28 }, { wch: 22 }, { wch: 12 }, { wch: 12 }, { wch: 14 }, { wch: 16 }];
       var wb = XLSX.utils.book_new();

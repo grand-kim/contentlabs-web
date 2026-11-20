@@ -94,13 +94,13 @@
   window.addEventListener('beforeunload', function (e) { if (S.dirty) { e.preventDefault(); e.returnValue = ''; } });
 
   /* ── 견적 목록 ── */
-  var GROUPS = { pending: ['pending'], issued: ['issued'], closed: ['hold', 'expired', 'revoked'], all: null };
+  var GROUPS = { pending: ['pending'], issued: ['issued'], unread: ['issued'], closed: ['hold', 'expired', 'revoked'], all: null };
   function deskView(id) {
     var body = $('#body');
     if (!$('.desk', body)) {
       body.innerHTML = '<div class="desk"><aside class="side"><div class="filters">' +
         '<div class="seg" role="group" aria-label="상태">' +
-        '<button data-f="pending">검토 대기</button><button data-f="issued">발행됨</button><button data-f="closed">보류·만료·회수</button><button data-f="all">전체</button></div>' +
+        '<button data-f="pending">검토 대기</button><button data-f="issued">발행됨</button><button data-f="unread">미열람</button><button data-f="closed">보류·만료·회수</button><button data-f="all">전체</button></div>' +
         '<input type="search" id="qs" placeholder="기관명·과정명·견적번호 검색">' +
         '<div class="row hide" id="delbar"><span class="small muted" id="pickn">선택 0건</span><span style="flex:1"></span>' +
         '<button class="btn sm danger" id="delpick" disabled>선택 삭제</button><button class="btn sm ghost" id="dellog">삭제 기록</button></div></div>' +
@@ -129,6 +129,7 @@
     var g = GROUPS[S.filter];
     var list = S.items.filter(function (x) {
       if (g && g.indexOf(x.status) < 0) return false;
+      if (S.filter === 'unread' && x.viewed_at) return false;
       if (!S.q) return true;
       return [x.id, x.client_name, x.course_title, x.contact_name, x.email].join(' ').toLowerCase().indexOf(S.q) >= 0;
     });
@@ -136,7 +137,9 @@
     $('#ql').innerHTML = list.length ? list.map(function (x) {
       return '<li' + (S.canDelete ? ' style="display:flex"' : '') + '>' + (S.canDelete ? '<label class="check" style="padding:0 0 0 10px;border-bottom:1px solid var(--line)"><input type="checkbox" class="pk" data-id="' + esc(x.id) + '"' + (S.picked[x.id] ? ' checked' : '') + ' aria-label="' + esc(x.id) + ' 선택"></label>' : '') +
         '<button data-id="' + esc(x.id) + '"' + (x.id === cur ? ' aria-current="true"' : '') + '>' +
-        '<div class="l1"><span class="mono">' + esc(x.id) + '</span><span class="chip ' + x.status + '">' + STATUS[x.status] + '</span></div>' +
+        '<div class="l1"><span class="mono">' + esc(x.id) + '</span><span>' +
+        (x.status === 'issued' ? (x.viewed_at ? '<span class="chip issued" title="' + esc('마지막 열람 ' + t16(x.last_viewed_at)) + '">열람 ' + (x.view_count || 1) + '</span> ' : '<span class="chip">미열람</span> ') : '') +
+        '<span class="chip ' + x.status + '">' + STATUS[x.status] + '</span></span></div>' +
         '<div class="l2">' + esc(x.client_name || '(기관명 없음)') + '</div>' +
         '<div class="l3"><span>' + esc((x.content_type || '') + ' ' + (x.sessions || '') + '차시') + (x.edited ? ' · 수정함' : '') + '</span><span class="num">' + (x.total != null ? won(x.total) + '원' : '') + '</span></div></button></li>';
     }).join('') : '<li class="empty">해당하는 견적이 없습니다.</li>';
@@ -299,6 +302,16 @@
     $('#sum').innerHTML = h;
   }
 
+  /* 고객 열람 현황 (견적서 링크를 연 기록) */
+  function viewBox(r) {
+    var dl = r.downloads || {}, days = r.issued_at ? Math.floor((Date.now() - Date.parse(r.issued_at)) / 864e5) : 0;
+    if (!r.viewed_at) return '<p class="note warn small">아직 고객이 견적서를 열어 보지 않았습니다' + (days > 0 ? ' (발행 ' + days + '일째)' : '') + '. 메일이 스팸함으로 갔을 수 있으니, 며칠 지나면 전화로 확인해 보세요.</p>';
+    var bits = ['처음 열람 <b>' + esc(t16(r.viewed_at)) + '</b>'];
+    if ((r.view_count || 1) > 1) bits.push('마지막 열람 ' + esc(t16(r.last_viewed_at)) + ' · 모두 <b>' + r.view_count + '번</b>');
+    if (dl.pdf) bits.push('PDF 저장 ' + dl.pdf + '번');
+    if (dl.xlsx) bits.push('엑셀 ' + dl.xlsx + '번');
+    return '<p class="note ok small">✓ 고객 열람 — ' + bits.join(' · ') + '</p><p class="muted small" style="margin:4px 0 8px">30분 안에 다시 연 것은 한 번으로 셉니다. 테스트 미리보기는 세지 않습니다.</p>';
+  }
   function drawIssue() {
     var d = S.cur, r = d.rec, st = d.status, h = '';
     if (!d.mail) h += '<p class="note warn small">견적 서버에 메일 설정(SMTP)이 없어 고객에게 메일이 가지 않습니다. 발행 뒤 링크를 복사해 직접 보내 주세요.</p>';
@@ -307,7 +320,7 @@
         '<button class="btn lime" id="a_issue">승인하고 고객에게 발송</button>' + (st === 'pending' ? '<button class="btn" id="a_hold">보류</button>' : '<button class="btn" id="a_pending">검토 대기로</button>') + '</div>';
     } else {
       h += '<div class="row"><input type="text" readonly id="lnk" value="' + esc(d.link || '') + '" style="flex:1;min-width:220px"><button class="btn sm" id="cp">링크 복사</button></div>' +
-        '<p class="small muted">유효기간 ' + esc(String(r.expires_at || '').slice(0, 10)) + '까지 · ' + (r.viewed_at ? '고객 열람 ' + esc(t16(r.viewed_at)) : '아직 열람 안 함') + '</p><div class="row">' +
+        '<p class="small muted" style="margin-bottom:4px">유효기간 ' + esc(String(r.expires_at || '').slice(0, 10)) + '까지</p>' + viewBox(r) + '<div class="row">' +
         '<button class="btn" id="a_resend"' + (st !== 'issued' ? ' disabled' : '') + '>메일 다시 보내기</button>' +
         '<button class="btn" id="a_extend">' + d.validDays + '일 연장해 재발송</button>' +
         '<button class="btn danger" id="a_revoke"' + (st === 'revoked' ? ' disabled' : '') + '>링크 회수</button>' +
