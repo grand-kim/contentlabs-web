@@ -39,6 +39,7 @@ window.CL_FORMATS = [
   "id": "storytelling",
   "name": "스토리텔링형",
   "eyebrow": "FORMAT 02 · STORYTELLING",
+  "cases": ["story-1.webp", "story-2.webp", "story-3.webp", "story-4.webp", "story-5.webp"],
   "title": "이야기로 몰입시키는<br>스토리텔링형",
   "lead": "내레이션과 영상으로 개념을 이야기처럼 전개합니다. 동기 부여와 개념 이해에 강합니다.",
   "card": "내레이션과 영상으로 개념을 이야기처럼 전개해 몰입과 동기를 높입니다",
