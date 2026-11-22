@@ -159,9 +159,12 @@ print(total([3, 5, 7]))</pre>
    * cases[] (assets/img/cases/ 안의 파일 이름)가 있으면 그걸 쓰고,
    * 없으면 각 섹션 영상의 대표 장면(assets/img/thumbs/)을 순서대로 돌린다. */
   const CASE_DIR = 'assets/img/cases/';
+  /* 같은 파일 이름으로 사례 이미지를 교체하면 브라우저가 옛 그림을 계속 쓴다.
+   * 이미지를 바꿀 때마다 이 값을 올려 준다. */
+  const CASE_V = '20261123b';
   let caseTimer;
   const caseSrcs = f => (f.cases && f.cases.length)
-    ? f.cases.map(c => CASE_DIR + c)
+    ? f.cases.map(c => CASE_DIR + c + '?v=' + CASE_V)
     : (f.sections || []).map(x => thumb(x.video));
   function rollHTML(f){
     const cs = caseSrcs(f); if (!cs.length) return '';
