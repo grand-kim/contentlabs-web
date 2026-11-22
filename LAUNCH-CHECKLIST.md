@@ -24,6 +24,7 @@
 | A-7 | 국외 이전 고지가 실제 운영과 일치 — Cloudflare(견적 서버)·OpenAI(AI 답변)·GitHub(접수 보관)·(Snowflake·Streamlit은 2026-11-18 정리하며 삭제) | 확인됨 (2026-11-18) | `privacy.html` 제4조·제5조. AI를 Claude로 바꾸면 OpenAI 줄을 Anthropic, PBC로 교체 |
 | A-8 | 쿠키·분석도구 서술이 실제와 일치 — 2026-11-17 네이버 프리미엄 로그분석(공통 스크립트, 전 페이지) 설치하며 제9조 수정. GA 등 다른 도구를 더 넣으면 다시 수정 | 확인됨 (2026-11-17) | `privacy.html` 제9조 |
 | A-9 | 네이버 전환추적: 공통 스크립트 설치 후 검색광고 센터에서 **검수 요청** / 전환은 「견적 문의」 버튼 클릭 시점(유형 4 신청/예약, 페이지당 1회)으로 결정·설치 (2026-11-17, `quote-panel.js` trackInquiry) | **검수 결과 확인 필요** | 각 HTML `</body>` 직전, wa = `s_dc8ed50e2d6` |
+| A-10 | 예전(WordPress) 주소 404 방지 — `404.html`이 예전 주소를 새 섹션으로 자동 이동, 메뉴 주소(/about·/service·/portfolio·/partner·/blog·/contact)는 이동용 페이지 둠. `sitemap.xml`·`robots.txt` 추가 (2026-11-23) | 반영함 — 구글 서치 콘솔에 sitemap 제출 필요 | `404.html` RULES |
 
 **재점검이 필요해지는 때**
 
