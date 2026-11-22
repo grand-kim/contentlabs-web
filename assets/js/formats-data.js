@@ -199,6 +199,7 @@ window.CL_FORMATS = [
   "id": "motiongraphic",
   "name": "모션그래픽형",
   "eyebrow": "FORMAT 07 · MOTION GRAPHICS",
+  "cases": ["motion-1.webp", "motion-2.webp", "motion-3.webp", "motion-4.webp", "motion-5.webp"],
   "title": "그래픽으로 설명하는<br>모션그래픽형",
   "lead": "출연자 없이 그래픽·애니메이션으로 설명합니다. 추상 개념과 데이터 시각화에 강합니다.",
   "card": "출연자 없이 그래픽·애니메이션으로 추상 개념과 데이터를 설명",
