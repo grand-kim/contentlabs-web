@@ -232,6 +232,7 @@ window.CL_FORMATS = [
  {
   "id": "onboarding",
   "name": "온보딩·매뉴얼형",
+  "cases": ["onboard-1.webp", "onboard-2.webp", "onboard-3.webp", "onboard-4.webp", "onboard-5.webp", "onboard-6.webp"],
   "eyebrow": "FORMAT 08 · ONBOARDING & MANUAL",
   "title": "처음 맡는 사람도 그대로 따라 하는<br>온보딩·매뉴얼형",
   "lead": "업무 절차와 제품 사용법을 실제 수행 순서대로 담아, 신규 담당자와 사용자가 옆에서 알려주는 사람 없이도 스스로 따라 할 수 있게 만드는 포맷입니다.",
